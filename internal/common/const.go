@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package common
 
 import "time"
@@ -30,5 +33,5 @@ type AuthorizationHeader string
 // Authorization Header.
 const (
 	TENANT_ACCESS_TOKEN AuthorizationHeader = "tenant_access_token"
-	APP_ACCESS_TOKEN   AuthorizationHeader = "app_access_token"
+	APP_ACCESS_TOKEN    AuthorizationHeader = "app_access_token"
 )

@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package common
 
 import (
@@ -30,7 +33,7 @@ func TestNewLarkClient(t *testing.T) {
 		name              string
 		tenantAccessToken string
 		appAccessToken    string
-		want             *LarkClient
+		want              *LarkClient
 	}{
 		{
 			name:              "success create new client",
@@ -59,20 +62,20 @@ func TestNewLarkClient(t *testing.T) {
 
 func TestLarkClient_DoRequest(t *testing.T) {
 	cases := []struct {
-		name              string
-		method            HTTPMethod
-		path              string
-		requestBody       interface{}
-		mockResponseCode  int
-		mockResponseBody  interface{}
-		authHeader        AuthorizationHeader
-		expectedError     bool
-		expectedResponse  *testResponse
-		mockHTTPError     error
-		cancelContext     bool
+		name             string
+		method           HTTPMethod
+		path             string
+		requestBody      interface{}
+		mockResponseCode int
+		mockResponseBody interface{}
+		authHeader       AuthorizationHeader
+		expectedError    bool
+		expectedResponse *testResponse
+		mockHTTPError    error
+		cancelContext    bool
 	}{
 		{
-			name:              "successful request",
+			name:             "successful request",
 			method:           GET,
 			path:             "/test",
 			mockResponseCode: 200,
@@ -81,7 +84,7 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedResponse: &testResponse{Message: "success"},
 		},
 		{
-			name:              "error response",
+			name:             "error response",
 			method:           POST,
 			path:             "/test",
 			mockResponseCode: 400,
@@ -89,11 +92,11 @@ func TestLarkClient_DoRequest(t *testing.T) {
 				"code": 400,
 				"msg":  "bad request",
 			},
-			authHeader:       APP_ACCESS_TOKEN,
-			expectedError:    true,
+			authHeader:    APP_ACCESS_TOKEN,
+			expectedError: true,
 		},
 		{
-			name:           "connection error",
+			name:          "connection error",
 			method:        GET,
 			path:          "/test",
 			mockHTTPError: fmt.Errorf("connection refused"),
@@ -109,7 +112,7 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name:           "invalid request body",
+			name:          "invalid request body",
 			method:        POST,
 			path:          "/test",
 			requestBody:   make(chan int),
@@ -117,7 +120,7 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name:              "invalid response body",
+			name:             "invalid response body",
 			method:           GET,
 			path:             "/test",
 			mockResponseCode: 200,
@@ -126,14 +129,14 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError:    true,
 		},
 		{
-			name:           "invalid authorization header",
+			name:          "invalid authorization header",
 			method:        GET,
 			path:          "/test",
 			authHeader:    "invalid-header",
 			expectedError: true,
 		},
 		{
-			name:              "error response with invalid json",
+			name:             "error response with invalid json",
 			method:           GET,
 			path:             "/test",
 			mockResponseCode: 400,
@@ -142,7 +145,7 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError:    true,
 		},
 		{
-			name:           "retry exhausted",
+			name:          "retry exhausted",
 			method:        GET,
 			path:          "/test",
 			mockHTTPError: fmt.Errorf("connection refused"),
@@ -150,34 +153,34 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name:           "invalid URL",
+			name:          "invalid URL",
 			method:        GET,
 			path:          string([]byte{0x7f}), // Invalid URL character
 			authHeader:    TENANT_ACCESS_TOKEN,
 			expectedError: true,
 		},
 		{
-			name:           "empty authorization header",
-			method:        GET,
-			path:          "/test",
-			authHeader:    "",
+			name:             "empty authorization header",
+			method:           GET,
+			path:             "/test",
+			authHeader:       "",
 			mockResponseCode: 200,
 			mockResponseBody: testResponse{Message: "success"},
 			expectedResponse: &testResponse{Message: "success"},
 		},
 		{
-			name:           "nil response",
-			method:        GET,
-			path:          "/test",
-			authHeader:    TENANT_ACCESS_TOKEN,
+			name:             "nil response",
+			method:           GET,
+			path:             "/test",
+			authHeader:       TENANT_ACCESS_TOKEN,
 			mockResponseCode: 200,
 			mockResponseBody: testResponse{Message: "success"},
 		},
 		{
-			name:           "empty auth header with nil response",
-			method:        GET,
-			path:          "/test",
-			authHeader:    "",
+			name:             "empty auth header with nil response",
+			method:           GET,
+			path:             "/test",
+			authHeader:       "",
 			mockResponseCode: 200,
 			mockResponseBody: map[string]interface{}{
 				"message": "success",
@@ -185,20 +188,20 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name:           "nil response with success status",
-			method:        GET,
-			path:          "/test",
-			authHeader:    TENANT_ACCESS_TOKEN,
+			name:             "nil response with success status",
+			method:           GET,
+			path:             "/test",
+			authHeader:       TENANT_ACCESS_TOKEN,
 			mockResponseCode: 200,
 			mockResponseBody: nil,
-			expectedError: false,
+			expectedError:    false,
 		},
 		{
-			name:           "request with body",
-			method:        POST,
-			path:          "/test",
-			requestBody:   map[string]interface{}{
-				"key": "value",
+			name:   "request with body",
+			method: POST,
+			path:   "/test",
+			requestBody: map[string]interface{}{
+				"key":    "value",
 				"number": 123,
 				"nested": map[string]string{
 					"inner": "data",
@@ -206,7 +209,7 @@ func TestLarkClient_DoRequest(t *testing.T) {
 			},
 			mockResponseCode: 200,
 			mockResponseBody: testResponse{Message: "success"},
-			authHeader:    TENANT_ACCESS_TOKEN,
+			authHeader:       TENANT_ACCESS_TOKEN,
 			expectedResponse: &testResponse{Message: "success"},
 		},
 	}
@@ -509,4 +512,3 @@ func TestLarkClient_DoRequest_RetryWithContext(t *testing.T) {
 		t.Error("expected at least one attempt")
 	}
 }
-

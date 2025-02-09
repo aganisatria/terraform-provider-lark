@@ -14,11 +14,10 @@ import (
 )
 
 type LarkClientInterface interface {
-    DoTenantRequest(ctx context.Context, method HTTPMethod, api string, requestBody interface{}, response interface{}) error
+	DoTenantRequest(ctx context.Context, method HTTPMethod, api string, requestBody interface{}, response interface{}) error
 }
 
 var _ LarkClientInterface = (*LarkClient)(nil)
-
 
 type LarkClient struct {
 	httpClient        HTTPClient
