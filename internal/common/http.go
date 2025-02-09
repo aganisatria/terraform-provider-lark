@@ -178,7 +178,7 @@ func UsergroupMemberAddAPI(ctx context.Context, client *LarkClient, groupID stri
 		memberIDs = append(memberIDs, member.MemberID)
 	}
 
-	// Each request will be limited to 100 members
+	// Each request will be limited to 100 members.
 	for i := 0; i < len(memberIDs); i += 100 {
 		batchMemberIDs := memberIDs[i:min(i+100, len(memberIDs))]
 
@@ -235,7 +235,7 @@ func UsergroupMemberRemoveAPI(ctx context.Context, client *LarkClient, groupID s
 		memberIDs = append(memberIDs, member.MemberID)
 	}
 
-	// Each request will be limited to 100 members
+	// Each request will be limited to 100 members.
 	for i := 0; i < len(memberIDs); i += 100 {
 		batchMemberIDs := memberIDs[i:min(i+100, len(memberIDs))]
 		currentTurnMemberIDs := []UsergroupMember{}

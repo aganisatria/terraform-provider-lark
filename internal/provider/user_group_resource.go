@@ -217,21 +217,21 @@ func (r *userGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 }
 
-// We use modify plan when we need both plan and state when validating
+// We use modify plan when we need both plan and state when validating.
 func (r *userGroupResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	var plan, state *userGroupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	// plan null means resource is being deleted
+	// plan null means resource is being deleted.
 	if req.Plan.Raw.IsNull() {
 		return
 	}
 
-	// State null means resource is being created
+	// State null means resource is being created.
 	if req.State.Raw.IsNull() {
 
-		// Checking if the group name is available
+		// Checking if the group name is available.
 		userGroupListResponse, err := common.UsergroupListAPI(ctx, r.client)
 		if err != nil {
 			resp.Diagnostics.AddError("API Error Getting User Group", err.Error())
@@ -256,7 +256,7 @@ func (r *userGroupResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 	}
 
 	if plan.Name.ValueString() != state.Name.ValueString() {
-		// Checking if the group name is available
+		// Checking if the group name is available.
 		userGroupListResponse, err := common.UsergroupListAPI(ctx, r.client)
 		if err != nil {
 			resp.Diagnostics.AddError("API Error Getting User Group", err.Error())
