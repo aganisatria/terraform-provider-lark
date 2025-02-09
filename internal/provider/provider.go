@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aganisatria/terraform-provider-lark/internal/common"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/function"
@@ -15,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-provider-scaffolding-framework/internal/common"
 )
 
 // Ensure LarkProvider satisfies various provider interfaces.
