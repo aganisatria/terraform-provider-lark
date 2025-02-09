@@ -8,8 +8,8 @@ terraform {
 }
 
 provider "lark" {
-  app_id     = "cli_a718cd690138d02f"
-  app_secret = "J6m7yQiJ5MF0u4MT4q9AVb7nZQPNSRLd"
+  app_id     = ""
+  app_secret = ""
 }
 
 resource "lark_user_group" "example" {
