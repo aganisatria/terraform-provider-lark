@@ -17,8 +17,8 @@ type BaseResponse struct {
 
 // Access Token Request.
 type AccessTokenRequest struct {
-	AppID     string `json:"app_id"`
-	AppSecret string `json:"app_secret"`
+	AppID     string `json:"app_id,omitempty"`
+	AppSecret string `json:"app_secret,omitempty"`
 }
 
 // Access Token Response.

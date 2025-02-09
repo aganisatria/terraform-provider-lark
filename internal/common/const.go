@@ -7,8 +7,10 @@ import "time"
 
 // URL Things.
 const (
-	BASE_URL = "https://open.larksuite.com/open-apis"
-	AUTH_API = BASE_URL + "/auth/v3/tenant_access_token/internal"
+	BASE_URL      = "https://open.larksuite.com/open-apis"
+	AUTH_API      = "/auth/v3/tenant_access_token/internal"
+	USERGROUP_API = "/contact/v3/group"
+	USER_API      = "/contact/v3/users"
 )
 
 // HTTP Call Helpers.

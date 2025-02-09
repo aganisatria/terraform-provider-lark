@@ -93,7 +93,10 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 }
 
 func (p *LarkProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		NewUserGroupResource,
+		NewUserGroupMemberResource,
+	}
 }
 
 func (p *LarkProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {

@@ -35,6 +35,16 @@ func NewLarkClient(tenantAccessToken, appAccessToken string, baseDelay time.Dura
 	}
 }
 
+func (c *LarkClient) DoInitializeRequest(
+	ctx context.Context,
+	method HTTPMethod,
+	path string,
+	requestBody interface{},
+	response interface{},
+) error {
+	return c.DoRequest(ctx, method, path, requestBody, response, "")
+}
+
 func (c *LarkClient) DoTenantRequest(
 	ctx context.Context,
 	method HTTPMethod,
