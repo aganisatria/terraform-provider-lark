@@ -10,10 +10,10 @@ import (
 	. "github.com/bytedance/mockey"
 )
 
-// SetupDoTenantRequest helper that arrange mock for DoTenantRequest
-// return cleanup function to unpatch the mock
-// mockError: error that want to simulate
-// mockResponse: response that want to assign to response variable
+// SetupDoTenantRequest helper that arrange mock for DoTenantRequest.
+// return cleanup function to unpatch the mock.
+// mockError: error that want to simulate.
+// mockResponse: response that want to assign to response variable.
 func SetupDoTenantRequest(mockError error, mockResponse interface{}) func() {
 	patch := Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
 		if mockError != nil {

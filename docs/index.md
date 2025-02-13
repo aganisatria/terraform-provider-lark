@@ -29,5 +29,5 @@ provider "lark" {
 
 ### Optional
 
-- `base_delay` (Number) The base delay for retrying the request
-- `base_retry_count` (Number) The base retry count for retrying the request
+- `delay` (Number) The delay for retrying the request
+- `retry_count` (Number) The retry count for retrying the request

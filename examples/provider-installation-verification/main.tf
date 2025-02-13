@@ -8,8 +8,10 @@ terraform {
 }
 
 provider "lark" {
-  app_id     = ""
-  app_secret = ""
+  app_id      = "app_id"
+  app_secret  = "app_secret"
+  delay       = 1000
+  retry_count = 3
 }
 
 resource "lark_user_group" "example" {
@@ -18,8 +20,3 @@ resource "lark_user_group" "example" {
   description = "example"
 }
 
-resource "lark_user_group_member" "example2" {
-  depends_on    = [lark_user_group.example]
-  user_group_id = lark_user_group.example.group_id
-  member_ids    = []
-}
