@@ -438,16 +438,6 @@ func (r *groupChatResource) Update(ctx context.Context, req resource.UpdateReque
 		}
 	}
 
-	userIDList := []string{}
-	for _, userID := range plan.UserIDList {
-		userIDList = append(userIDList, userID.ValueString())
-	}
-
-	botIDList := []string{}
-	for _, botID := range plan.BotIDList {
-		botIDList = append(botIDList, botID.ValueString())
-	}
-
 	requestBody := common.GroupChatUpdateRequest{
 		Avatar:                 plan.Avatar.ValueString(),
 		Name:                   plan.Name.ValueString(),
