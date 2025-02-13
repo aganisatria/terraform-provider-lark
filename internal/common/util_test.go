@@ -7,7 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/agiledragon/gomonkey/v2"
+	. "github.com/bytedance/mockey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestContains(t *testing.T) {
@@ -19,42 +20,42 @@ func TestContains(t *testing.T) {
 		mock    bool
 	}{
 		{
-			name:    "string kosong tanpa substring",
+			name:    "string empty with empty substring",
 			s:       "",
 			substrs: []string{},
 			want:    false,
 			mock:    false,
 		},
 		{
-			name:    "string kosong dengan substring",
+			name:    "string empty with substring",
 			s:       "",
 			substrs: []string{"test"},
 			want:    false,
 			mock:    false,
 		},
 		{
-			name:    "string dengan satu substring yang cocok",
+			name:    "string with one substring match",
 			s:       "hello world",
 			substrs: []string{"world"},
 			want:    true,
 			mock:    false,
 		},
 		{
-			name:    "string dengan beberapa substring, satu cocok",
+			name:    "string with multiple substrings, one match",
 			s:       "hello world",
 			substrs: []string{"foo", "world", "bar"},
 			want:    true,
 			mock:    false,
 		},
 		{
-			name:    "string dengan beberapa substring, tidak ada yang cocok",
+			name:    "string with multiple substrings, no match",
 			s:       "hello world",
 			substrs: []string{"foo", "bar", "baz"},
 			want:    false,
 			mock:    false,
 		},
 		{
-			name:    "test dengan mock strings.Contains selalu false",
+			name:    "test with mock strings.Contains always false",
 			s:       "hello world",
 			substrs: []string{"world"},
 			want:    false,
@@ -63,17 +64,15 @@ func TestContains(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var patches *gomonkey.Patches
+		PatchConvey(tt.name, t, func() {
 			if tt.mock {
-				patches = gomonkey.ApplyFuncReturn(strings.Contains, false)
-				defer patches.Reset()
+				Mock(strings.Contains).To(func(s, substr string) bool {
+					return false
+				}).Build()
 			}
 
 			got := contains(tt.s, tt.substrs...)
-			if got != tt.want {
-				t.Errorf("contains() = %v, want %v", got, tt.want)
-			}
+			So(got, ShouldEqual, tt.want)
 		})
 	}
 }

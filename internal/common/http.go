@@ -13,10 +13,10 @@ import (
 
 // ACCESS TOKEN API.
 // https://open.larksuite.com/document/server-docs/getting-started/api-access-token/auth-v3/tenant_access_token_internal.
-func GetAccessTokenAPI(appID, appSecret string) (string, string, error) {
+func GetAccessTokenAPI(appID, appSecret string, baseDelay int, retryCount int) (string, string, error) {
 	tflog.Info(context.Background(), "Getting access token from Lark API")
 
-	client := NewLarkClient("", "", BASE_DELAY)
+	client := NewLarkClient("", "", baseDelay, retryCount)
 
 	requestBody := AccessTokenRequest{
 		AppID:     appID,
@@ -26,13 +26,12 @@ func GetAccessTokenAPI(appID, appSecret string) (string, string, error) {
 	var response AccessTokenResponse
 
 	err := client.DoInitializeRequest(context.Background(), POST, AUTH_API, requestBody, &response)
+
 	if err != nil {
+		fmt.Println("err", err)
 		return "", "", fmt.Errorf("failed to get access token: %w", err)
 	}
-
-	if response.Code != 0 {
-		return "", "", fmt.Errorf("failed to get access token: %s", response.Msg)
-	}
+	fmt.Println("response", response)
 
 	tflog.Info(context.Background(), "Access token retrieved successfully")
 

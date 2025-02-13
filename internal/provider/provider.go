@@ -31,8 +31,10 @@ type LarkProvider struct {
 
 // LarkProviderModel describes the provider data model.
 type LarkProviderModel struct {
-	AppId     types.String `tfsdk:"app_id"`
-	AppSecret types.String `tfsdk:"app_secret"`
+	AppId             types.String `tfsdk:"app_id"`
+	AppSecret         types.String `tfsdk:"app_secret"`
+	BaseDelay         types.Int64  `tfsdk:"base_delay"`
+	BaseRetryCount    types.Int64  `tfsdk:"base_retry_count"`
 }
 
 func (p *LarkProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -54,6 +56,16 @@ func (p *LarkProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 				Sensitive:           true,
 				Description:         "The app Secret for authenticating with Lark API",
 				MarkdownDescription: "The App Secret for authenticating with Lark API",
+			},
+			"base_delay": schema.Int64Attribute{
+				Optional:            true,
+				Description:         "The base delay for retrying the request",
+				MarkdownDescription: "The base delay for retrying the request",
+			},
+			"base_retry_count": schema.Int64Attribute{
+				Optional:            true,
+				Description:         "The base retry count for retrying the request",
+				MarkdownDescription: "The base retry count for retrying the request",
 			},
 		},
 	}
@@ -77,7 +89,7 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	tenantAccessToken, appAccessToken, err := common.GetAccessTokenAPI(data.AppId.ValueString(), data.AppSecret.ValueString())
+	tenantAccessToken, appAccessToken, err := common.GetAccessTokenAPI(data.AppId.ValueString(), data.AppSecret.ValueString(), int(data.BaseDelay.ValueInt64()), int(data.BaseRetryCount.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("authentication"),
@@ -87,7 +99,7 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	client := common.NewLarkClient(tenantAccessToken, appAccessToken, common.BASE_DELAY)
+	client := common.NewLarkClient(tenantAccessToken, appAccessToken, common.BASE_DELAY, common.BASE_RETRY_COUNT)
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
