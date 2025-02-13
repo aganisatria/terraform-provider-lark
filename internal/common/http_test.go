@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package common
 
 import (
@@ -28,25 +31,25 @@ func TestGetAccessTokenAPI(t *testing.T) {
 		expectedError string
 	}{
 		{
-			name:      "error when calling DoInitializeRequest",
-			appID:     "test_app_id",
-			appSecret: "test_secret",
-			mockResponse: genericResponse,
-			mockError:    fmt.Errorf("invalid credentials"),
-			wantTenant:   "",
-			wantApp:      "",
-			wantErr:      true,
+			name:          "error when calling DoInitializeRequest",
+			appID:         "test_app_id",
+			appSecret:     "test_secret",
+			mockResponse:  genericResponse,
+			mockError:     fmt.Errorf("invalid credentials"),
+			wantTenant:    "",
+			wantApp:       "",
+			wantErr:       true,
 			expectedError: "failed to get access token: invalid credentials",
 		},
 		{
-			name:      "success",
-			appID:     "test_app_id",
-			appSecret: "test_secret",
+			name:         "success",
+			appID:        "test_app_id",
+			appSecret:    "test_secret",
 			mockResponse: genericResponse,
-			mockError:  nil,
-			wantTenant: "test_tenant_token",
-			wantApp:    "test_app_token",
-			wantErr:    false,
+			mockError:    nil,
+			wantTenant:   "test_tenant_token",
+			wantApp:      "test_app_token",
+			wantErr:      false,
 		},
 	}
 
@@ -94,11 +97,11 @@ func TestUsergroupCreateAPI(t *testing.T) {
 			wantErr:          true,
 		},
 		{
-			name: "success create",
-			req:  UsergroupCreateRequest{},
+			name:             "success create",
+			req:              UsergroupCreateRequest{},
 			expectedResponse: UsergroupCreateResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:        nil,
+			wantErr:          false,
 		},
 	}
 
@@ -146,11 +149,11 @@ func TestUsergroupGetAPI(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:    "success get",
-			groupID: "group1",
+			name:         "success get",
+			groupID:      "group1",
 			mockResponse: UsergroupGetResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:    nil,
+			wantErr:      false,
 		},
 	}
 
@@ -199,12 +202,12 @@ func TestUsergroupUpdateAPI(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:    "success update",
-			groupID: "group1",
-			req:     UsergroupUpdateRequest{},
+			name:         "success update",
+			groupID:      "group1",
+			req:          UsergroupUpdateRequest{},
 			mockResponse: BaseResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:    nil,
+			wantErr:      false,
 		},
 	}
 
@@ -251,11 +254,11 @@ func TestUsergroupDeleteAPI(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:    "success delete",
-			groupID: "group1",
+			name:         "success delete",
+			groupID:      "group1",
 			mockResponse: BaseResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:    nil,
+			wantErr:      false,
 		},
 	}
 
@@ -399,12 +402,12 @@ func TestUsergroupMemberGetByMemberTypeAPI(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:       "success get by member type",
-			groupID:    "group1",
-			memberType: "user",
+			name:         "success get by member type",
+			groupID:      "group1",
+			memberType:   "user",
 			mockResponse: UsergroupMemberGetResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:    nil,
+			wantErr:      false,
 		},
 	}
 	for _, tt := range tests {
@@ -509,11 +512,11 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:    "success get users",
-			userIDs: []string{"uid1", "uid2"},
+			name:         "success get users",
+			userIDs:      []string{"uid1", "uid2"},
 			mockResponse: UserInfoBatchGetResponse{},
-			mockError: nil,
-			wantErr:   false,
+			mockError:    nil,
+			wantErr:      false,
 		},
 	}
 	for _, tt := range tests {

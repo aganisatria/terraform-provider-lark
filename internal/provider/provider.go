@@ -31,10 +31,10 @@ type LarkProvider struct {
 
 // LarkProviderModel describes the provider data model.
 type LarkProviderModel struct {
-	AppId             types.String `tfsdk:"app_id"`
-	AppSecret         types.String `tfsdk:"app_secret"`
-	BaseDelay         types.Int64  `tfsdk:"base_delay"`
-	BaseRetryCount    types.Int64  `tfsdk:"base_retry_count"`
+	AppId          types.String `tfsdk:"app_id"`
+	AppSecret      types.String `tfsdk:"app_secret"`
+	BaseDelay      types.Int64  `tfsdk:"base_delay"`
+	BaseRetryCount types.Int64  `tfsdk:"base_retry_count"`
 }
 
 func (p *LarkProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {

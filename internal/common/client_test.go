@@ -79,7 +79,6 @@ func TestLarkClient_DoTenantRequest(t *testing.T) {
 			Mock((*LarkClient).DoRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, requestBody interface{}, response interface{}, authorizationHeader AuthorizationHeader) error {
 				return nil
 			}).Build()
-		
 
 			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
 			err := client.DoTenantRequest(context.Background(), GET, "/test", nil, nil)
@@ -104,7 +103,6 @@ func TestLarkClient_DoAppRequest(t *testing.T) {
 			Mock((*LarkClient).DoRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, requestBody interface{}, response interface{}, authorizationHeader AuthorizationHeader) error {
 				return nil
 			}).Build()
-
 
 			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
 			err := client.DoAppRequest(context.Background(), GET, "/test", nil, nil)

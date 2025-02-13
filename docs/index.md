@@ -26,3 +26,8 @@ provider "lark" {
 
 - `app_id` (String, Sensitive) The App ID for authenticating with Lark API
 - `app_secret` (String, Sensitive) The App Secret for authenticating with Lark API
+
+### Optional
+
+- `base_delay` (Number) The base delay for retrying the request
+- `base_retry_count` (Number) The base retry count for retrying the request
