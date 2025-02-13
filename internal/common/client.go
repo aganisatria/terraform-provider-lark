@@ -19,15 +19,17 @@ type LarkClient struct {
 	AppAccessToken    string
 	BaseDelay         time.Duration
 	RetryCount        int
+	AppID             string
 }
 
-func NewLarkClient(tenantAccessToken, appAccessToken string, baseDelay int, retryCount int) *LarkClient {
+func NewLarkClient(tenantAccessToken, appAccessToken, appID string, baseDelay int, retryCount int) *LarkClient {
 	return &LarkClient{
 		httpClient:        &http.Client{},
 		TenantAccessToken: tenantAccessToken,
 		AppAccessToken:    appAccessToken,
 		BaseDelay:         time.Duration(baseDelay) * time.Second,
 		RetryCount:        retryCount,
+		AppID:             appID,
 	}
 }
 

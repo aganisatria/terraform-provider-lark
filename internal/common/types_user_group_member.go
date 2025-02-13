@@ -19,15 +19,3 @@ type GetUserGroupMemberResponse struct {
 		MemberTotal int     `json:"member_total"`
 	} `json:"data"`
 }
-
-type ChatGroupAdministratorRequest struct {
-	ManagerIDs []string `json:"manager_ids"`
-}
-
-type ChatGroupAdministratorResponse struct {
-	BaseResponse
-	Data struct {
-		ChatManagers    []string `json:"chat_managers"`
-		ChatBotManagers []string `json:"chat_bot_managers"`
-	} `json:"data"`
-}

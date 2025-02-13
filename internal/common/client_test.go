@@ -15,15 +15,11 @@ import (
 
 func TestNewLarkClient(t *testing.T) {
 	tests := []struct {
-		name              string
-		tenantAccessToken string
-		appAccessToken    string
-		want              *LarkClient
+		name string
+		want *LarkClient
 	}{
 		{
-			name:              "success create new client",
-			tenantAccessToken: "tenant-token",
-			appAccessToken:    "app-token",
+			name: "success create new client",
 			want: &LarkClient{
 				httpClient:        &http.Client{},
 				TenantAccessToken: "tenant-token",
@@ -34,7 +30,7 @@ func TestNewLarkClient(t *testing.T) {
 
 	for _, tc := range tests {
 		PatchConvey(tc.name, t, func() {
-			got := NewLarkClient(tc.tenantAccessToken, tc.appAccessToken, BASE_DELAY, BASE_RETRY_COUNT)
+			got := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			So(got.TenantAccessToken, ShouldEqual, tc.want.TenantAccessToken)
 			So(got.AppAccessToken, ShouldEqual, tc.want.AppAccessToken)
 		})
@@ -56,7 +52,7 @@ func TestLarkClient_DoInitializeRequest(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			err := client.DoInitializeRequest(context.Background(), GET, "/test", nil, nil)
 			if err != nil {
 				t.Errorf("DoInitializeRequest = %v", err)
@@ -80,7 +76,7 @@ func TestLarkClient_DoTenantRequest(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			err := client.DoTenantRequest(context.Background(), GET, "/test", nil, nil)
 			if err != nil {
 				t.Errorf("DoTenantRequest = %v", err)
@@ -104,7 +100,7 @@ func TestLarkClient_DoAppRequest(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			err := client.DoAppRequest(context.Background(), GET, "/test", nil, nil)
 			if err != nil {
 				t.Errorf("DoAppRequest = %v", err)
