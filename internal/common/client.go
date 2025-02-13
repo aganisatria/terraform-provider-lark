@@ -13,25 +13,21 @@ import (
 	"time"
 )
 
-type LarkClientInterface interface {
-	DoTenantRequest(ctx context.Context, method HTTPMethod, api string, requestBody interface{}, response interface{}) error
-}
-
-var _ LarkClientInterface = (*LarkClient)(nil)
-
 type LarkClient struct {
 	httpClient        HTTPClient
 	TenantAccessToken string
 	AppAccessToken    string
 	BaseDelay         time.Duration
+	RetryCount        int
 }
 
-func NewLarkClient(tenantAccessToken, appAccessToken string, baseDelay time.Duration) *LarkClient {
+func NewLarkClient(tenantAccessToken, appAccessToken string, baseDelay int, retryCount int) *LarkClient {
 	return &LarkClient{
 		httpClient:        &http.Client{},
 		TenantAccessToken: tenantAccessToken,
 		AppAccessToken:    appAccessToken,
-		BaseDelay:         baseDelay,
+		BaseDelay:         time.Duration(baseDelay) * time.Second,
+		RetryCount:        retryCount,
 	}
 }
 
@@ -75,7 +71,7 @@ func (c *LarkClient) DoRequest(
 ) error {
 	var lastErr error
 
-	for attempt := 0; attempt < MAX_RETRIES; attempt++ {
+	for attempt := 0; attempt < c.RetryCount; attempt++ {
 		if attempt > 0 {
 			// Exponential backoff: 1s, 2s, 4s
 			delay := c.BaseDelay * time.Duration(1<<uint(attempt-1))
@@ -101,7 +97,7 @@ func (c *LarkClient) DoRequest(
 		return err
 	}
 
-	return fmt.Errorf("failed after %d retries. Last error: %w", MAX_RETRIES, lastErr)
+	return fmt.Errorf("failed after %d retries. Last error: %w", c.RetryCount, lastErr)
 }
 
 func (c *LarkClient) doSingleRequest(

@@ -31,8 +31,10 @@ type LarkProvider struct {
 
 // LarkProviderModel describes the provider data model.
 type LarkProviderModel struct {
-	AppId     types.String `tfsdk:"app_id"`
-	AppSecret types.String `tfsdk:"app_secret"`
+	AppId      types.String `tfsdk:"app_id"`
+	AppSecret  types.String `tfsdk:"app_secret"`
+	Delay      types.Int64  `tfsdk:"delay"`
+	RetryCount types.Int64  `tfsdk:"retry_count"`
 }
 
 func (p *LarkProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -54,6 +56,16 @@ func (p *LarkProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 				Sensitive:           true,
 				Description:         "The app Secret for authenticating with Lark API",
 				MarkdownDescription: "The App Secret for authenticating with Lark API",
+			},
+			"delay": schema.Int64Attribute{
+				Optional:            true,
+				Description:         "The delay for retrying the request",
+				MarkdownDescription: "The delay for retrying the request",
+			},
+			"retry_count": schema.Int64Attribute{
+				Optional:            true,
+				Description:         "The retry count for retrying the request",
+				MarkdownDescription: "The retry count for retrying the request",
 			},
 		},
 	}
@@ -77,7 +89,7 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	tenantAccessToken, appAccessToken, err := common.GetAccessTokenAPI(data.AppId.ValueString(), data.AppSecret.ValueString())
+	tenantAccessToken, appAccessToken, err := common.GetAccessTokenAPI(data.AppId.ValueString(), data.AppSecret.ValueString(), int(data.Delay.ValueInt64()), int(data.RetryCount.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("authentication"),
@@ -87,7 +99,7 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	client := common.NewLarkClient(tenantAccessToken, appAccessToken, common.BASE_DELAY)
+	client := common.NewLarkClient(tenantAccessToken, appAccessToken, int(data.Delay.ValueInt64()), int(data.RetryCount.ValueInt64()))
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }

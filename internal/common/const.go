@@ -3,8 +3,6 @@
 
 package common
 
-import "time"
-
 // URL Things.
 const (
 	BASE_URL      = "https://open.larksuite.com/open-apis"
@@ -15,8 +13,8 @@ const (
 
 // HTTP Call Helpers.
 const (
-	MAX_RETRIES = 3
-	BASE_DELAY  = 10 * time.Second
+	BASE_RETRY_COUNT = 3
+	BASE_DELAY       = 10 //
 )
 
 type HTTPMethod string
