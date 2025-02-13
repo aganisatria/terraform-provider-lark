@@ -5,6 +5,7 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 
@@ -16,7 +17,7 @@ import (
 func GetAccessTokenAPI(appID, appSecret string, baseDelay int, retryCount int) (string, string, error) {
 	tflog.Info(context.Background(), "Getting access token from Lark API")
 
-	client := NewLarkClient("", "", baseDelay, retryCount)
+	client := NewLarkClient("", "", appID, baseDelay, retryCount)
 
 	requestBody := AccessTokenRequest{
 		AppID:     appID,
@@ -280,5 +281,240 @@ func GetUsersByOpenIDAPI(ctx context.Context, client *LarkClient, userIds []stri
 		return nil, err
 	}
 	tflog.Info(ctx, "Users by OpenID Retrieved")
+	return response, nil
+}
+
+// GROUP CHAT API.
+// https://open.larksuite.com/document/server-docs/group/chat/create.
+func GroupChatCreateAPI(ctx context.Context, client *LarkClient, request GroupChatCreateRequest) (*GroupChatCreateResponse, error) {
+	response := &GroupChatCreateResponse{}
+	tflog.Info(ctx, "Creating Group Chat")
+
+	err := client.DoTenantRequest(ctx, POST, GROUP_CHAT_API, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to create group chat", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Chat Created")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/group/chat/delete.
+func GroupChatDeleteAPI(ctx context.Context, client *LarkClient, chatID string) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Deleting Group Chat")
+	path := fmt.Sprintf("%s/%s", GROUP_CHAT_API, chatID)
+
+	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
+	tflog.Info(ctx, "Deleting Group Chat", map[string]interface{}{
+		"path": path,
+	})
+	if err != nil {
+		tflog.Error(ctx, "Failed to delete group chat", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Chat Deleted")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/group/chat/update.
+func GroupChatUpdateAPI(ctx context.Context, client *LarkClient, chatID string, request GroupChatUpdateRequest) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Updating Group Chat")
+	path := fmt.Sprintf("%s/%s", GROUP_CHAT_API, chatID)
+
+	err := client.DoTenantRequest(ctx, PUT, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to update group chat", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Chat Updated")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/group/chat/update-2.
+func GroupChatSpeechScopesUpdateAPI(ctx context.Context, client *LarkClient, chatID string, request GroupChatSpeechScopesUpdateRequest) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Updating Group Chat Speech Scopes")
+	path := fmt.Sprintf("%s/%s/speech_scopes", GROUP_CHAT_API, chatID)
+
+	err := client.DoTenantRequest(ctx, PATCH, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to update group chat speech scopes", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Chat Speech Scopes Updated")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/group/chat/get.
+func GroupChatGetAPI(ctx context.Context, client *LarkClient, chatID string) (*GroupChatGetResponse, error) {
+	response := &GroupChatGetResponse{}
+	tflog.Info(ctx, "Getting Group Chat")
+	path := fmt.Sprintf("%s/%s", GROUP_CHAT_API, chatID)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to get group chat", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Chat Retrieved")
+	return response, nil
+}
+
+// GROUP MEMBER API.
+// https://open.larksuite.com/document/server-docs/group/chat-member/get.
+func GroupMemberGetAPI(ctx context.Context, client *LarkClient, chatID string) (*GetUserGroupMemberResponse, error) {
+	response := &GetUserGroupMemberResponse{}
+	tflog.Info(ctx, "Getting Group Member")
+	path := fmt.Sprintf("%s/%s/members", GROUP_CHAT_API, chatID)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to get group member", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Group Member Retrieved")
+	return response, nil
+}
+
+// GROUP ADMINISTRATOR API.
+// https://open.larksuite.com/document/server-docs/group/chat-member/add_managers.
+func GroupChatAdministratorAddAPI(ctx context.Context, client *LarkClient, chatID string, GroupChatType GroupChatType, request GroupChatAdministratorRequest) (*GroupChatAdministratorResponse, error) {
+	response := &GroupChatAdministratorResponse{}
+	tflog.Info(ctx, "Adding Group Administrator")
+	path := fmt.Sprintf("%s/%s/managers/add_managers", GROUP_CHAT_API, chatID)
+
+	botList, personList, err := splitUserAndBotList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	// For Common Groups, up to 10 administrators can be specified.
+	// For Super Lark Groups, up to 20 administrators can be specified.
+
+	if GroupChatType == GroupChatTypeCommon && len(personList)+len(botList) > 10 {
+		return nil, errors.New("invalid administrator count, max 10 administrators for common group")
+	}
+
+	if GroupChatType == GroupChatTypeSuperLarge && len(personList)+len(botList) > 20 {
+		return nil, errors.New("invalid administrator count, max 20 administrators for super large group")
+	}
+
+	tflog.Info(ctx, "Adding Group Administrator", map[string]interface{}{
+		"bot_count":  len(botList),
+		"user_count": len(personList),
+	})
+
+	// Up to 50 users or 5 bots can be specified for each request.
+	for i := 0; i < len(botList); i += 5 {
+		end := i + 5
+		if end > len(botList) {
+			end = len(botList)
+		}
+
+		batchRequest := GroupChatAdministratorRequest{
+			ManagerIDs: botList[i:end],
+		}
+
+		path = fmt.Sprintf("%s?member_id_type=app_id", path)
+
+		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to add bot administrators", map[string]interface{}{
+				"error": err.Error(),
+			})
+			return nil, err
+		}
+	}
+
+	for i := 0; i < len(personList); i += 50 {
+		end := i + 50
+		if end > len(personList) {
+			end = len(personList)
+		}
+
+		batchRequest := GroupChatAdministratorRequest{
+			ManagerIDs: personList[i:end],
+		}
+
+		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to add user administrators", map[string]interface{}{
+				"error": err.Error(),
+			})
+			return nil, err
+		}
+	}
+
+	tflog.Info(ctx, "Group Administrator Added")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/group/chat-member/delete_managers.
+func GroupChatAdministratorDeleteAPI(ctx context.Context, client *LarkClient, chatID string, request GroupChatAdministratorRequest) (*GroupChatAdministratorResponse, error) {
+	response := &GroupChatAdministratorResponse{}
+	tflog.Info(ctx, "Deleting Group Administrator")
+	path := fmt.Sprintf("%s/%s/managers/delete_managers", GROUP_CHAT_API, chatID)
+
+	botList, personList, err := splitUserAndBotList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	// Up to 50 users or 5 bots can be specified for each request.
+	for i := 0; i < len(botList); i += 5 {
+		end := i + 5
+		if end > len(botList) {
+			end = len(botList)
+		}
+
+		batchRequest := GroupChatAdministratorRequest{
+			ManagerIDs: botList[i:end],
+		}
+
+		path = fmt.Sprintf("%s?member_id_type=app_id", path)
+
+		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to add bot administrators", map[string]interface{}{
+				"error": err.Error(),
+			})
+			return nil, err
+		}
+	}
+
+	for i := 0; i < len(personList); i += 50 {
+		end := i + 50
+		if end > len(personList) {
+			end = len(personList)
+		}
+
+		batchRequest := GroupChatAdministratorRequest{
+			ManagerIDs: personList[i:end],
+		}
+
+		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to add user administrators", map[string]interface{}{
+				"error": err.Error(),
+			})
+			return nil, err
+		}
+	}
+
+	tflog.Info(ctx, "Group Administrator Deleted")
 	return response, nil
 }

@@ -27,3 +27,16 @@ func BaseSchemaResourceAttributes() map[string]schema.Attribute {
 		},
 	}
 }
+
+type I18nName struct {
+	ZhCn types.String `tfsdk:"zh_cn"`
+	JaJp types.String `tfsdk:"ja_jp"`
+	EnUs types.String `tfsdk:"en_us"`
+}
+
+type RestrictedModeSetting struct {
+	Status                         types.Bool   `tfsdk:"status"`
+	ScreenshotHasPermissionSetting types.String `tfsdk:"screenshot_has_permission_setting"`
+	DownloadHasPermissionSetting   types.String `tfsdk:"download_has_permission_setting"`
+	MessageHasPermissionSetting    types.String `tfsdk:"message_has_permission_setting"`
+}

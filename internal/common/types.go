@@ -28,3 +28,16 @@ type AccessTokenResponse struct {
 	TenantAccessToken string `json:"tenant_access_token"`
 	Expire            int    `json:"expire"`
 }
+
+// I18nName is the internationalized name of the group chat.
+type I18nName struct {
+	ZhCn string `json:"zh_cn,omitempty"`
+	JaJp string `json:"ja_jp,omitempty"`
+	EnUs string `json:"en_us,omitempty"`
+}
+
+type TypeOfUsersInAListValidator string
+
+const (
+	TypeOfUsersInAListValidatorUser TypeOfUsersInAListValidator = "USER_ID_IN_GROUP_CHAT"
+)

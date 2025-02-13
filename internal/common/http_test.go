@@ -110,7 +110,7 @@ func TestUsergroupCreateAPI(t *testing.T) {
 			cleanup := SetupDoTenantRequest(tt.mockError, tt.expectedResponse)
 			defer cleanup()
 
-			client := NewLarkClient("", "", BASE_DELAY, 1)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
 			got, err := UsergroupCreateAPI(context.Background(), client, tt.req)
 
 			if tt.wantErr {
@@ -170,7 +170,7 @@ func TestUsergroupGetAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupGetAPI(context.Background(), client, tt.groupID)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -224,7 +224,7 @@ func TestUsergroupUpdateAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupUpdateAPI(context.Background(), client, tt.groupID, tt.req)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -275,7 +275,7 @@ func TestUsergroupDeleteAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupDeleteAPI(context.Background(), client, tt.groupID)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -293,7 +293,7 @@ func TestUsergroupListAPI(t *testing.T) {
 		Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
 			return fmt.Errorf("list failed")
 		}).Build()
-		client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+		client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 		got, err := UsergroupListAPI(context.Background(), client)
 		So(err, ShouldNotBeNil)
 		So(got, ShouldBeNil)
@@ -317,7 +317,7 @@ func TestUsergroupListAPI(t *testing.T) {
 			return nil
 		}).Build()
 
-		client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+		client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 		got, err := UsergroupListAPI(context.Background(), client)
 		So(err, ShouldBeNil)
 		So(len(got.Data.GroupList), ShouldEqual, 2)
@@ -370,7 +370,7 @@ func TestUsergroupMemberAddAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupMemberAddAPI(context.Background(), client, tt.groupID, tt.req)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -423,7 +423,7 @@ func TestUsergroupMemberGetByMemberTypeAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupMemberGetByMemberTypeAPI(context.Background(), client, tt.groupID, tt.memberType)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -482,7 +482,7 @@ func TestUsergroupMemberRemoveAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := UsergroupMemberRemoveAPI(context.Background(), client, tt.groupID, tt.req)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
@@ -537,7 +537,7 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 				return nil
 			}).Build()
 
-			client := NewLarkClient("", "", BASE_DELAY, BASE_RETRY_COUNT)
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
 			got, err := GetUsersByOpenIDAPI(context.Background(), client, tt.userIDs)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)

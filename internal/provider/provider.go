@@ -99,13 +99,14 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	client := common.NewLarkClient(tenantAccessToken, appAccessToken, int(data.Delay.ValueInt64()), int(data.RetryCount.ValueInt64()))
+	client := common.NewLarkClient(tenantAccessToken, appAccessToken, data.AppId.ValueString(), int(data.Delay.ValueInt64()), int(data.RetryCount.ValueInt64()))
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
 
 func (p *LarkProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewGroupChatResource,
 		NewUserGroupResource,
 		NewUserGroupMemberResource,
 	}
