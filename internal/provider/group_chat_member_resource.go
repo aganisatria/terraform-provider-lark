@@ -333,9 +333,7 @@ func (r *groupChatMemberResource) AddHelper(ctx context.Context, plan groupChatM
 func (r *groupChatMemberResource) DeleteHelper(ctx context.Context, plan groupChatMemberResourceModel, removedMembers []string, removedAdministrators []string, groupChatID string) *diag.ErrorDiagnostic {
 	members := common.GroupChatMemberRequest{}
 	if len(removedMembers) > 0 {
-		for _, member := range removedMembers {
-			members.IDList = append(members.IDList, member)
-		}
+		members.IDList = append(members.IDList, removedMembers...)
 	}
 
 	administrators := common.GroupChatAdministratorRequest{}

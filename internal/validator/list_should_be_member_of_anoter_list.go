@@ -42,7 +42,7 @@ func (v ListShouldBeMemberOfAnotherListValidator) ValidateResource(ctx context.C
 
 	diags := req.Config.GetAttribute(ctx, v.Path, &list)
 	resp.Diagnostics.Append(diags...)
-	
+
 	diags = req.Config.GetAttribute(ctx, v.ValidatorPath, &validatorList)
 	resp.Diagnostics.Append(diags...)
 
