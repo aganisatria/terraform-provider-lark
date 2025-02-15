@@ -297,16 +297,12 @@ func (r *groupChatMemberResource) ConfigValidators(ctx context.Context) []resour
 func (r *groupChatMemberResource) AddHelper(ctx context.Context, plan groupChatMemberResourceModel, addedMembers []string, addedAdministrators []string, groupChatID string) *diag.ErrorDiagnostic {
 	members := common.GroupChatMemberRequest{}
 	if len(addedMembers) > 0 {
-		for _, member := range addedMembers {
-			members.IDList = append(members.IDList, member)
-		}
+		members.IDList = append(members.IDList, addedMembers...)
 	}
 
 	administrators := common.GroupChatAdministratorRequest{}
 	if len(addedAdministrators) > 0 {
-		for _, member := range addedAdministrators {
-			administrators.ManagerIDs = append(administrators.ManagerIDs, member)
-		}
+		administrators.ManagerIDs = append(administrators.ManagerIDs, addedAdministrators...)
 	}
 
 	if len(members.IDList) > 0 {
@@ -344,9 +340,7 @@ func (r *groupChatMemberResource) DeleteHelper(ctx context.Context, plan groupCh
 
 	administrators := common.GroupChatAdministratorRequest{}
 	if len(removedAdministrators) > 0 {
-		for _, member := range removedAdministrators {
-			administrators.ManagerIDs = append(administrators.ManagerIDs, member)
-		}
+		administrators.ManagerIDs = append(administrators.ManagerIDs, removedAdministrators...)
 	}
 
 	if len(administrators.ManagerIDs) > 0 {
