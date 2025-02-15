@@ -285,6 +285,33 @@ func GetUsersByOpenIDAPI(ctx context.Context, client *LarkClient, userIds []stri
 	return response, nil
 }
 
+// https://open.larksuite.com/document/server-docs/contact-v3/user/batch_get_id.
+func GetUserIdByEmailsAPI(ctx context.Context, client *LarkClient, request UserInfoBatchGetRequest) (*UserInfoBatchGetResponse, error) {
+	batchResponse := &UserInfoBatchGetResponse{}
+	path := fmt.Sprintf("%s/batch_get_id", USER_API)
+	tflog.Info(ctx, "Getting User ID by Emails")
+
+	// Every request can only contain up to 50 emails.
+	for i := 0; i < len(request.Emails); i += 50 {
+		response := &UserInfoBatchGetResponse{}
+		batchEmails := request.Emails[i:min(i+50, len(request.Emails))]
+		request := UserInfoBatchGetRequest{
+			Emails: batchEmails,
+		}
+
+		err := client.DoTenantRequest(ctx, POST, path, request, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to get user ID by emails", map[string]interface{}{
+				"error": err.Error(),
+			})
+			return nil, err
+		}
+		batchResponse.Data.UserList = append(batchResponse.Data.UserList, response.Data.UserList...)
+	}
+	tflog.Info(ctx, "User ID Retrieved")
+	return batchResponse, nil
+}
+
 // GROUP CHAT API.
 // https://open.larksuite.com/document/server-docs/group/chat/create.
 func GroupChatCreateAPI(ctx context.Context, client *LarkClient, request GroupChatCreateRequest) (*GroupChatCreateResponse, error) {
