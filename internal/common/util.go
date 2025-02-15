@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// contains checks if string contains any of the substrings.
-func contains(s string, substrs ...string) bool {
+// Contains checks if string contains any of the substrings.
+func Contains(s string, substrs ...string) bool {
 	for _, substr := range substrs {
 		if strings.Contains(s, substr) {
 			return true
@@ -19,12 +19,12 @@ func contains(s string, substrs ...string) bool {
 }
 
 // splitUserAndBotList splits the user and bot list from the request.
-func splitUserAndBotList(request GroupChatAdministratorRequest) (botList []string, personList []string, err error) {
-	for _, admin := range request.ManagerIDs {
-		if strings.HasPrefix(admin, "cli_") {
-			botList = append(botList, admin)
-		} else if strings.HasPrefix(admin, "ou_") {
-			personList = append(personList, admin)
+func splitUserAndBotList(ids []string) (botList []string, personList []string, err error) {
+	for _, id := range ids {
+		if strings.HasPrefix(id, "cli_") {
+			botList = append(botList, id)
+		} else if strings.HasPrefix(id, "ou_") {
+			personList = append(personList, id)
 		} else {
 			return nil, nil, errors.New("invalid administrator ID")
 		}

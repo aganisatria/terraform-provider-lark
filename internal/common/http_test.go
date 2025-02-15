@@ -522,7 +522,7 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 		PatchConvey(tt.name, t, func() {
 			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
 				for _, uid := range tt.userIDs {
-					if !contains(path, uid) {
+					if !Contains(path, uid) {
 						return fmt.Errorf("missing user id in path")
 					}
 				}
@@ -545,6 +545,704 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 			} else {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestGroupChatCreateAPI(t *testing.T) {
+	tests := []struct {
+		name         string
+		mockResponse GroupChatCreateResponse
+		mockError    error
+		wantErr      bool
+	}{
+		{
+			name:         "error on create",
+			mockResponse: GroupChatCreateResponse{},
+			mockError:    fmt.Errorf("create failed"),
+			wantErr:      true,
+		},
+		{
+			name:         "success create",
+			mockResponse: GroupChatCreateResponse{},
+			mockError:    nil,
+			wantErr:      false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+				if tt.mockError != nil {
+					return tt.mockError
+				}
+				if r, ok := resp.(*GroupChatCreateResponse); ok {
+					*r = tt.mockResponse
+				}
+				return nil
+			}).Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatCreateAPI(context.Background(), client, GroupChatCreateRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestGroupChatDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:      "error on delete",
+			chatID:    "chat1",
+			mockError: fmt.Errorf("delete failed"),
+			wantErr:   true,
+		},
+		{
+			name:      "success delete",
+			chatID:    "chat1",
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+				if tt.mockError != nil {
+					return tt.mockError
+				}
+				if r, ok := resp.(*BaseResponse); ok {
+					*r = BaseResponse{}
+				}
+				return nil
+			}).Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatDeleteAPI(context.Background(), client, tt.chatID)
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &BaseResponse{})
+			}
+		})
+	}
+}
+
+func TestGroupChatUpdateAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:      "error on update",
+			chatID:    "chat1",
+			mockError: fmt.Errorf("update failed"),
+			wantErr:   true,
+		},
+		{
+			name:      "success update",
+			chatID:    "chat1",
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+				if tt.mockError != nil {
+					return tt.mockError
+				}
+				if r, ok := resp.(*BaseResponse); ok {
+					*r = BaseResponse{}
+				}
+				return nil
+			}).Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatUpdateAPI(context.Background(), client, tt.chatID, GroupChatUpdateRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &BaseResponse{})
+			}
+		})
+	}
+}
+
+func TestGroupChatGetAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:      "error on get",
+			chatID:    "chat1",
+			mockError: fmt.Errorf("get failed"),
+			wantErr:   true,
+		},
+		{
+			name:      "success get",
+			chatID:    "chat1",
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+				if tt.mockError != nil {
+					return tt.mockError
+				}
+				if r, ok := resp.(*GroupChatGetResponse); ok {
+					*r = GroupChatGetResponse{}
+				}
+				return nil
+			}).Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatGetAPI(context.Background(), client, tt.chatID)
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &GroupChatGetResponse{})
+			}
+		})
+	}
+}
+
+func TestGroupChatMemberGetAPI(t *testing.T) {
+	tests := []struct {
+		name         string
+		chatID       string
+		mockFn       func() *MockBuilder
+		wantErr      bool
+		expectedResp *GroupChatMemberGetResponse
+	}{
+		{
+			name:   "success with multiple pages",
+			chatID: "chat1",
+			mockFn: func() *MockBuilder {
+				responses := []GroupChatMemberGetResponse{
+					{
+						BaseResponse: BaseResponse{Code: 0, Msg: "success"},
+						Data: struct {
+							Items       []ListMember `json:"items"`
+							PageToken   string       `json:"page_token"`
+							HasMore     bool         `json:"has_more"`
+							MemberTotal int64        `json:"member_total"`
+						}{
+							Items:     []ListMember{{Name: "User1"}},
+							PageToken: "next_page",
+							HasMore:   true,
+						},
+					},
+					{
+						BaseResponse: BaseResponse{Code: 0, Msg: "success"},
+						Data: struct {
+							Items       []ListMember `json:"items"`
+							PageToken   string       `json:"page_token"`
+							HasMore     bool         `json:"has_more"`
+							MemberTotal int64        `json:"member_total"`
+						}{
+							Items:     []ListMember{{Name: "User2"}},
+							PageToken: "",
+							HasMore:   false,
+						},
+					},
+				}
+
+				callCount := 0
+				return Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+					if callCount >= len(responses) {
+						return fmt.Errorf("unexpected API call")
+					}
+					if r, ok := resp.(*GroupChatMemberGetResponse); ok {
+						*r = responses[callCount]
+					}
+					callCount++
+					return nil
+				})
+			},
+			wantErr: false,
+			expectedResp: &GroupChatMemberGetResponse{
+				BaseResponse: BaseResponse{Code: 0, Msg: "success"},
+				Data: struct {
+					Items       []ListMember `json:"items"`
+					PageToken   string       `json:"page_token"`
+					HasMore     bool         `json:"has_more"`
+					MemberTotal int64        `json:"member_total"`
+				}{
+					Items:       []ListMember{{Name: "User1"}, {Name: "User2"}},
+					PageToken:   "",
+					HasMore:     false,
+					MemberTotal: 2,
+				},
+			},
+		},
+		{
+			name:   "error on second page",
+			chatID: "chat1",
+			mockFn: func() *MockBuilder {
+				responses := []GroupChatMemberGetResponse{
+					{
+						BaseResponse: BaseResponse{Code: 0, Msg: "success"},
+						Data: struct {
+							Items       []ListMember `json:"items"`
+							PageToken   string       `json:"page_token"`
+							HasMore     bool         `json:"has_more"`
+							MemberTotal int64        `json:"member_total"`
+						}{
+							Items:     []ListMember{{Name: "User1"}},
+							PageToken: "error_token",
+							HasMore:   true,
+						},
+					},
+				}
+
+				callCount := 0
+				return Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+					if callCount > 0 {
+						return fmt.Errorf("error on second page")
+					}
+					if r, ok := resp.(*GroupChatMemberGetResponse); ok {
+						*r = responses[callCount]
+					}
+					callCount++
+					return nil
+				})
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			tt.mockFn().Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatMemberGetAPI(context.Background(), client, tt.chatID)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, tt.expectedResp)
+			}
+		})
+	}
+}
+
+func TestGroupChatMemberAddAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockFn    func() []*MockBuilder
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:   "error on split user and bot list",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return nil, nil, fmt.Errorf("split failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on add bot",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("add failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on add person",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				callCount := 0
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						callCount++
+						if callCount == 1 {
+							return nil
+						}
+						return fmt.Errorf("failed to add person members")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "success add",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatMemberAddAPI(context.Background(), client, tt.chatID, GroupChatMemberRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldNotBeNil)
+			}
+		})
+	}
+}
+
+func TestGroupChatMemberDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockFn    func() []*MockBuilder
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:   "error on split user and bot list",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return nil, nil, fmt.Errorf("split failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on delete bot",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on delete person",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				callCount := 0
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						callCount++
+						if callCount == 1 {
+							return nil
+						}
+						return fmt.Errorf("failed to delete person members")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "there is error code on success delete",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						mockResponse := GroupChatMemberRemoveResponse{
+							Data: struct {
+								InvalidIDList []string `json:"invalid_id_list"`
+							}{
+								InvalidIDList: []string{"user1", "user2"},
+							},
+						}
+						reflect.ValueOf(resp).Elem().Set(reflect.ValueOf(mockResponse))
+						return nil
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "success delete",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatMemberDeleteAPI(context.Background(), client, tt.chatID, GroupChatMemberRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldNotBeNil)
+			}
+		})
+	}
+}
+
+func TestGroupChatAdministratorAddAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockFn    func() []*MockBuilder
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:   "error on split user and bot list",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return nil, nil, fmt.Errorf("split failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error because too many administrators",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7", "bot8", "bot9", "bot10"}, []string{"user1", "user2"}, nil
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on add administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("add administrator failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on add administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				callCount := 0
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						callCount++
+						if callCount == 1 {
+							return nil
+						}
+						return fmt.Errorf("failed to add administrator")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "success add administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatAdministratorAddAPI(context.Background(), client, tt.chatID, GroupChatAdministratorRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldNotBeNil)
+			}
+		})
+	}
+}
+
+func TestGroupChatAdministratorDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name      string
+		chatID    string
+		mockFn    func() []*MockBuilder
+		mockError error
+		wantErr   bool
+	}{
+		{
+			name:   "error on split user and bot list",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return nil, nil, fmt.Errorf("split failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on delete administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete administrator failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "error on delete administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				callCount := 0
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						callCount++
+						if callCount == 1 {
+							return nil
+						}
+						return fmt.Errorf("failed to delete administrator")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name:   "success delete administrator",
+			chatID: "chat1",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock(splitUserAndBotList).To(func(ids []string) (botList []string, personList []string, err error) {
+						return []string{"bot1", "bot2"}, []string{"user1", "user2"}, nil
+					}),
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GroupChatAdministratorDeleteAPI(context.Background(), client, tt.chatID, GroupChatAdministratorRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldNotBeNil)
 			}
 		})
 	}

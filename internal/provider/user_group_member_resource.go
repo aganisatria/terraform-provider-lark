@@ -236,7 +236,7 @@ func (r *userGroupMemberResource) ConfigValidators(ctx context.Context) []resour
 		return []resource.ConfigValidator{}
 	}
 	return []resource.ConfigValidator{
-		local_validator.NewUserIDValidator("member_ids", true, r.client),
+		local_validator.NewUserIDValidator("member_ids", true, false, r.client),
 	}
 }
 

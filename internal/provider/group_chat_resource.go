@@ -39,8 +39,6 @@ type groupChatResourceModel struct {
 	Name                   types.String           `tfsdk:"name"`
 	Description            types.String           `tfsdk:"description"`
 	I18nNames              *I18nName              `tfsdk:"i18n_names"`
-	UserIDList             []types.String         `tfsdk:"user_id_list"`
-	BotIDList              []types.String         `tfsdk:"bot_id_list"`
 	GroupMessageType       types.String           `tfsdk:"group_message_type"`
 	ChatMode               types.String           `tfsdk:"chat_mode"`
 	ChatType               types.String           `tfsdk:"chat_type"`
@@ -81,7 +79,7 @@ func (r *groupChatResource) Schema(ctx context.Context, req resource.SchemaReque
 			Optional:            true,
 			Computed:            true,
 			Validators: []validator.String{
-				GroupNameValidator(),
+				NewGroupNameValidator(),
 			},
 		},
 		"description": schema.StringAttribute{
@@ -113,18 +111,6 @@ func (r *groupChatResource) Schema(ctx context.Context, req resource.SchemaReque
 		},
 		// We remove owner id, because we dont want bot ability to delete group chat is deleted.
 		// PLACEHOLDER OWNER ID.
-		"user_id_list": schema.ListAttribute{
-			Description:         "Group chat user ID list.",
-			MarkdownDescription: "Group chat user ID list.",
-			Optional:            true,
-			ElementType:         types.StringType,
-		},
-		"bot_id_list": schema.ListAttribute{
-			Description:         "Group chat bot ID list.",
-			MarkdownDescription: "Group chat bot ID list.",
-			Optional:            true,
-			ElementType:         types.StringType,
-		},
 		"group_message_type": schema.StringAttribute{
 			Description:         "Group chat message type.",
 			MarkdownDescription: "Group chat message type.",
@@ -343,23 +329,11 @@ func (r *groupChatResource) Create(ctx context.Context, req resource.CreateReque
 		}
 	}
 
-	userIDList := []string{}
-	for _, userID := range data.UserIDList {
-		userIDList = append(userIDList, userID.ValueString())
-	}
-
-	botIDList := []string{}
-	for _, botID := range data.BotIDList {
-		botIDList = append(botIDList, botID.ValueString())
-	}
-
 	requestBody := common.GroupChatCreateRequest{
 		Avatar:                 data.Avatar.ValueString(),
 		Name:                   data.Name.ValueString(),
 		Description:            data.Description.ValueString(),
 		I18nNames:              i18nNames,
-		UserIDList:             userIDList,
-		BotIDList:              append(botIDList, r.client.AppID),
 		GroupMessageType:       data.GroupMessageType.ValueString(),
 		ChatMode:               data.ChatMode.ValueString(),
 		ChatType:               data.ChatType.ValueString(),
@@ -496,16 +470,6 @@ func (r *groupChatResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 }
 
-func (r *groupChatResource) ConfigValidators(ctx context.Context) []resource.ConfigValidator {
-	if r.client == nil {
-		return []resource.ConfigValidator{}
-	}
-
-	return []resource.ConfigValidator{
-		NewUserIDValidator("user_id_list", true, r.client),
-	}
-}
-
 // We use modify plan when we need state when validating.
 func (r *groupChatResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	var plan, state *groupChatResourceModel
@@ -540,7 +504,7 @@ func (r *groupChatResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		return
 	}
 
-	if plan.RestrictedModeSetting.Status.ValueBool() {
+	if plan.RestrictedModeSetting != nil && !plan.RestrictedModeSetting.Status.IsNull() && !plan.RestrictedModeSetting.Status.IsUnknown() && plan.RestrictedModeSetting.Status.ValueBool() {
 		if (plan.RestrictedModeSetting.ScreenshotHasPermissionSetting.ValueString() == "all_members") &&
 			(plan.RestrictedModeSetting.DownloadHasPermissionSetting.ValueString() == "all_members") &&
 			(plan.RestrictedModeSetting.MessageHasPermissionSetting.ValueString() == "all_members") {

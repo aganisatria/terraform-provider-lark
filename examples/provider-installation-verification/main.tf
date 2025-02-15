@@ -13,5 +13,3 @@ provider "lark" {
   delay       = 1000
   retry_count = 3
 }
-
-
