@@ -24,3 +24,7 @@ type UserInfoBatchGetResponse struct {
 		UserList []UserInfo `json:"user_list"`
 	} `json:"data"`
 }
+
+type UserInfoBatchGetRequest struct {
+	Emails []string `json:"emails"`
+}
