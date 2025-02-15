@@ -26,7 +26,7 @@ resource "lark_user_group_member" "example" {
 
 ### Required
 
-- `member_ids` (List of String) List of user group members added by the user group (UserID list of a batch of users)
+- `member_ids` (List of String) List of user group members added by the user group (OpenID list of a batch of users)
 - `user_group_id` (String) Unique identity of the role, unique under a single tenant
 
 ### Read-Only

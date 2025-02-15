@@ -266,13 +266,29 @@ func UsergroupMemberRemoveAPI(ctx context.Context, client *LarkClient, groupID s
 // USER API.
 // https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/batch?appId=cli_a718cd690138d02f.
 func GetUsersByOpenIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
+	return GetUsersByIDAPI(ctx, client, userIds, OPEN_ID)
+}
+
+func GetUsersByUserIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
+	return GetUsersByIDAPI(ctx, client, userIds, USER_ID)
+}
+
+func GetUsersByUnionIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
+	return GetUsersByIDAPI(ctx, client, userIds, UNION_ID)
+}
+
+func GetUsersByIDAPI(ctx context.Context, client *LarkClient, userIds []string, idType UserIDType) (*UserInfoBatchGetResponse, error) {
 	response := &UserInfoBatchGetResponse{}
 	params := url.Values{}
 	for _, id := range userIds {
 		params.Add("user_ids", id)
 	}
-	path := fmt.Sprintf("%s/batch?%s", USER_API, params.Encode())
-	tflog.Info(ctx, "Getting Users by OpenID")
+	path := fmt.Sprintf("%s/batch?%s&user_id_type=%s", USER_API, params.Encode(), string(idType))
+	tflog.Info(ctx, "Getting Users by OpenID", map[string]interface{}{
+		"path":         path,
+		"user_id_type": string(idType),
+		"user_ids":     userIds,
+	})
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
 	if err != nil {
@@ -281,19 +297,21 @@ func GetUsersByOpenIDAPI(ctx context.Context, client *LarkClient, userIds []stri
 		})
 		return nil, err
 	}
-	tflog.Info(ctx, "Users by OpenID Retrieved")
+	tflog.Info(ctx, "Users by OpenID Retrieved", map[string]interface{}{
+		"response": response.Data.Items,
+	})
 	return response, nil
 }
 
 // https://open.larksuite.com/document/server-docs/contact-v3/user/batch_get_id.
-func GetUserIdByEmailsAPI(ctx context.Context, client *LarkClient, request UserInfoBatchGetRequest) (*UserInfoBatchGetResponse, error) {
-	batchResponse := &UserInfoBatchGetResponse{}
+func GetUserIdByEmailsAPI(ctx context.Context, client *LarkClient, request UserInfoBatchGetRequest) (*UserInfoByEmailOrMobileBatchGetResponse, error) {
+	batchResponse := &UserInfoByEmailOrMobileBatchGetResponse{}
 	path := fmt.Sprintf("%s/batch_get_id", USER_API)
 	tflog.Info(ctx, "Getting User ID by Emails")
 
 	// Every request can only contain up to 50 emails.
 	for i := 0; i < len(request.Emails); i += 50 {
-		response := &UserInfoBatchGetResponse{}
+		response := &UserInfoByEmailOrMobileBatchGetResponse{}
 		batchEmails := request.Emails[i:min(i+50, len(request.Emails))]
 		request := UserInfoBatchGetRequest{
 			Emails: batchEmails,

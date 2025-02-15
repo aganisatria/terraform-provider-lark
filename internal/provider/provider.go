@@ -120,6 +120,8 @@ func (p *LarkProvider) EphemeralResources(ctx context.Context) []func() ephemera
 func (p *LarkProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewUserBasedOnEmailDataSource,
+		NewUserBasedOnUnionIDDataSource,
+		NewUserBasedOnUserIDDataSource,
 	}
 }
 

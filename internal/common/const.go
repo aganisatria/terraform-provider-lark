@@ -36,3 +36,12 @@ const (
 	TENANT_ACCESS_TOKEN AuthorizationHeader = "tenant_access_token"
 	APP_ACCESS_TOKEN    AuthorizationHeader = "app_access_token"
 )
+
+type UserIDType string
+
+// User ID Type.
+const (
+	USER_ID  UserIDType = "user_id"
+	OPEN_ID  UserIDType = "open_id"
+	UNION_ID UserIDType = "union_id"
+)
