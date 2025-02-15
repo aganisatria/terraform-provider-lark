@@ -52,14 +52,14 @@ func (r *groupChatMemberResource) Schema(ctx context.Context, req resource.Schem
 			Required:            true,
 		},
 		"member_ids": schema.ListAttribute{
-			Description:         "List of members added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)",
-			MarkdownDescription: "List of members added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)",
+			Description:         "List of members added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)",
+			MarkdownDescription: "List of members added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)",
 			Optional:            true,
 			ElementType:         types.StringType,
 		},
 		"administrator_ids": schema.ListAttribute{
-			Description:         "List of administrator added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)",
-			MarkdownDescription: "List of administrator added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)",
+			Description:         "List of administrator added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)",
+			MarkdownDescription: "List of administrator added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)",
 			Optional:            true,
 			ElementType:         types.StringType,
 		},

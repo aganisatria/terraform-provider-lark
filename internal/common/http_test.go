@@ -550,6 +550,65 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 	}
 }
 
+func TestGetUserIdByEmailsAPI(t *testing.T) {
+	tests := []struct {
+		name         string
+		request      UserInfoBatchGetRequest
+		mockResponse UserInfoByEmailOrMobileBatchGetResponse
+		mockError    error
+		wantErr      bool
+	}{
+		{
+			name:         "error on get user id by emails",
+			request:      UserInfoBatchGetRequest{Emails: []string{"test@test.com", "test2@test.com"}},
+			mockResponse: UserInfoByEmailOrMobileBatchGetResponse{},
+			mockError:    fmt.Errorf("get user id by emails failed"),
+			wantErr:      true,
+		},
+		{
+			name:    "success get user id by emails",
+			request: UserInfoBatchGetRequest{Emails: []string{"test@test.com", "test2@test.com"}},
+			mockResponse: UserInfoByEmailOrMobileBatchGetResponse{
+				Data: struct {
+					UserList []UserInfo `json:"user_list"`
+				}{
+					UserList: []UserInfo{
+						{UserID: "uid1", Email: "test@test.com"},
+						{UserID: "uid2", Email: "test2@test.com"},
+					},
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+				if tt.mockError != nil {
+					return tt.mockError
+				}
+				if r, ok := resp.(*UserInfoByEmailOrMobileBatchGetResponse); ok {
+					*r = tt.mockResponse
+				} else {
+					return fmt.Errorf("unexpected type for response")
+				}
+				return nil
+			}).Build()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := GetUserIdByEmailsAPI(context.Background(), client, tt.request)
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
 func TestGroupChatCreateAPI(t *testing.T) {
 	tests := []struct {
 		name         string

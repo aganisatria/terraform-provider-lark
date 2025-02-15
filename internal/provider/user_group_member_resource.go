@@ -53,8 +53,8 @@ func (r *userGroupMemberResource) Schema(ctx context.Context, req resource.Schem
 			Required:            true,
 		},
 		"member_ids": schema.ListAttribute{
-			Description:         "List of user group members added by the user group (UserID list of a batch of users)",
-			MarkdownDescription: "List of user group members added by the user group (UserID list of a batch of users)",
+			Description:         "List of user group members added by the user group (OpenID list of a batch of users)",
+			MarkdownDescription: "List of user group members added by the user group (OpenID list of a batch of users)",
 			Required:            true,
 			ElementType:         types.StringType,
 			Validators: []validator.List{

@@ -29,8 +29,8 @@ resource "lark_group_chat_member" "example" {
 
 ### Optional
 
-- `administrator_ids` (List of String) List of administrator added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)
-- `member_ids` (List of String) List of members added by the group chat. Can be UserID (starts with ou) or BotID (starts with cli)
+- `administrator_ids` (List of String) List of administrator added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)
+- `member_ids` (List of String) List of members added by the group chat. Can be OpenID (starts with ou) or BotID (starts with cli)
 
 ### Read-Only
 
