@@ -36,10 +36,3 @@ const (
 	TENANT_ACCESS_TOKEN AuthorizationHeader = "tenant_access_token"
 	APP_ACCESS_TOKEN    AuthorizationHeader = "app_access_token"
 )
-
-type GroupChatType string
-
-const (
-	GroupChatTypeCommon     GroupChatType = "common"
-	GroupChatTypeSuperLarge GroupChatType = "super_large"
-)

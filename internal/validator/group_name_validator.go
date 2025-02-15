@@ -15,7 +15,7 @@ var _ validator.String = &groupNameValidator{}
 
 type groupNameValidator struct{}
 
-func GroupNameValidator() validator.String {
+func NewGroupNameValidator() validator.String {
 	return &groupNameValidator{}
 }
 

@@ -7,8 +7,6 @@ resource "lark_group_chat" "example" {
     "ja_jp" = "日本語"
     "en_us" = "English"
   }
-  user_id_list             = ["123123123123"]
-  bot_id_list              = ["123123123123"]
   group_message_type       = "chat"
   chat_mode                = "group"
   chat_type                = "public"

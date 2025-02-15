@@ -4,6 +4,7 @@
 package common
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -71,8 +72,41 @@ func TestContains(t *testing.T) {
 				}).Build()
 			}
 
-			got := contains(tt.s, tt.substrs...)
+			got := Contains(tt.s, tt.substrs...)
 			So(got, ShouldEqual, tt.want)
 		})
+	}
+}
+
+func TestSplitUserAndBotList(t *testing.T) {
+	tests := []struct {
+		name           string
+		ids            []string
+		wantBotList    []string
+		wantPersonList []string
+		wantErr        error
+	}{
+		{
+			name:           "success split",
+			ids:            []string{"ou_123", "cli_123"},
+			wantBotList:    []string{"cli_123"},
+			wantPersonList: []string{"ou_123"},
+			wantErr:        nil,
+		},
+		{
+			name:    "error invalid administrator ID",
+			ids:     []string{"invalid"},
+			wantErr: errors.New("invalid administrator ID"),
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			gotBotList, gotPersonList, err := splitUserAndBotList(tt.ids)
+			So(err, ShouldEqual, tt.wantErr)
+			So(gotBotList, ShouldResemble, tt.wantBotList)
+			So(gotPersonList, ShouldResemble, tt.wantPersonList)
+		})
+
 	}
 }

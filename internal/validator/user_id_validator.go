@@ -6,6 +6,7 @@ package validator
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/aganisatria/terraform-provider-lark/internal/common"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -15,16 +16,18 @@ import (
 
 // UserIDValidator is a validator for a list of user_id.
 type UserIDValidator struct {
-	Path      path.Path
-	doesAList bool
-	client    *common.LarkClient
+	Path          path.Path
+	doesAList     bool
+	doesSkipAppID bool
+	client        *common.LarkClient
 }
 
-func NewUserIDValidator(pathToField string, doesAList bool, client *common.LarkClient) resource.ConfigValidator {
+func NewUserIDValidator(pathToField string, doesAList bool, doesSkipAppID bool, client *common.LarkClient) resource.ConfigValidator {
 	return &UserIDValidator{
-		Path:      path.Root(pathToField),
-		doesAList: doesAList,
-		client:    client,
+		Path:          path.Root(pathToField),
+		doesAList:     doesAList,
+		doesSkipAppID: doesSkipAppID,
+		client:        client,
 	}
 }
 
@@ -49,6 +52,15 @@ func (v UserIDValidator) ValidateResource(ctx context.Context, req resource.Vali
 			return
 		}
 
+		if userID.ValueString() == "" {
+			resp.Diagnostics.AddAttributeError(
+				v.Path,
+				"Invalid User ID",
+				"User ID cannot be empty",
+			)
+			return
+		}
+
 		availableUserIDs = append(availableUserIDs, userID.ValueString())
 	} else {
 		var userIDs []types.String
@@ -62,6 +74,19 @@ func (v UserIDValidator) ValidateResource(ctx context.Context, req resource.Vali
 
 		for _, element := range userIDs {
 			if !element.IsNull() && !element.IsUnknown() {
+				if element.ValueString() == "" {
+					resp.Diagnostics.AddAttributeError(
+						v.Path,
+						"Invalid User ID",
+						"User ID cannot be empty",
+					)
+					return
+				}
+
+				if v.doesSkipAppID && strings.HasPrefix(element.ValueString(), "cli_") {
+					continue
+				}
+
 				availableUserIDs = append(availableUserIDs, element.ValueString())
 			}
 		}
@@ -80,7 +105,6 @@ func (v UserIDValidator) ValidateResource(ctx context.Context, req resource.Vali
 
 func isListOfUserIDsExist(ctx context.Context, client *common.LarkClient, userIDs []string) error {
 	_, err := common.GetUsersByOpenIDAPI(ctx, client, userIDs)
-
 	if err != nil {
 		return err
 	}

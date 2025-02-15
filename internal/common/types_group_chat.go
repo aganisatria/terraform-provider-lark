@@ -122,15 +122,3 @@ type GroupChatGetResponse struct {
 		ChatStatus             string                `json:"chat_status"`
 	} `json:"data"`
 }
-
-type GroupChatAdministratorRequest struct {
-	ManagerIDs []string `json:"manager_ids"`
-}
-
-type GroupChatAdministratorResponse struct {
-	BaseResponse
-	Data struct {
-		ChatManagers    []string `json:"chat_managers"`
-		ChatBotManagers []string `json:"chat_bot_managers"`
-	} `json:"data"`
-}

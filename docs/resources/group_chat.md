@@ -22,8 +22,6 @@ resource "lark_group_chat" "example" {
     "ja_jp" = "日本語"
     "en_us" = "English"
   }
-  user_id_list             = ["123123123123"]
-  bot_id_list              = ["123123123123"]
   group_message_type       = "chat"
   chat_mode                = "group"
   chat_type                = "public"
@@ -54,7 +52,6 @@ resource "lark_group_chat" "example" {
 - `add_member_permission` (String) Group chat add member permission.
 - `at_all_permission` (String) Group chat at all permission.
 - `avatar` (String) URL group of photo profile. You can check on this first https://open.larksuite.com/document/server-docs/im-v1/image/create
-- `bot_id_list` (List of String) Group chat bot ID list.
 - `chat_mode` (String) Group chat mode.
 - `chat_type` (String) Group chat type.
 - `description` (String) Group chat description.
@@ -70,7 +67,6 @@ resource "lark_group_chat" "example" {
 - `restricted_mode_setting` (Attributes) Group chat restricted mode setting. (see [below for nested schema](#nestedatt--restricted_mode_setting))
 - `share_card_permission` (String) Group chat share card permission.
 - `urgent_setting` (String) Group chat urgent setting.
-- `user_id_list` (List of String) Group chat user ID list.
 - `video_conference_setting` (String) Group chat video conference setting.
 
 ### Read-Only

@@ -173,7 +173,7 @@ func isConnectionError(err error) bool {
 	}
 
 	errStr := err.Error()
-	return contains(errStr,
+	return Contains(errStr,
 		"connection refused",
 		"no such host",
 		"timeout",
