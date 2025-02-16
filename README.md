@@ -1,18 +1,31 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# Terraform Provider Lark
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+Terraform Provider Lark is a custom provider that enables you to manage and integrate resources from the Lark API using Terraform. With this provider, you can automate the configuration and management of resources such as group chats, user groups, and user roles in Lark.
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+## Features
 
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
+### Resource
 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
+| Resource | Description |
+|---|---|
+| lark_group_chat | Create, update, and delete group chats in Lark |
+| lark_group_chat_member | Manage members for group chats in Lark |
+| lark_user_group | Create, update, and delete user groups in Lark |
+| lark_user_group_member | Manage members for user groups in Lark |
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+### Data Source
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+| Data Source | Description |
+|---|---|
+| lark_user_based_on_email | Retrieve user data based on email |
+| lark_user_based_on_union_id | Retrieve user data based on union ID |
+| lark_user_based_on_user_id | Retrieve user data based on user ID |
+
+## How to use
+See [docs](docs/index.md)
+
+## How to contribute
+Open an issue or a PR.
 
 ## Requirements
 
@@ -62,3 +75,7 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 ```shell
 make testacc
 ```
+
+_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+
+Build with love by [@aganisatria](https://github.com/aganisatria)
