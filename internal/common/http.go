@@ -265,18 +265,6 @@ func UsergroupMemberRemoveAPI(ctx context.Context, client *LarkClient, groupID s
 
 // USER API.
 // https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/batch?appId=cli_a718cd690138d02f.
-func GetUsersByOpenIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
-	return GetUsersByIDAPI(ctx, client, userIds, OPEN_ID)
-}
-
-func GetUsersByUserIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
-	return GetUsersByIDAPI(ctx, client, userIds, USER_ID)
-}
-
-func GetUsersByUnionIDAPI(ctx context.Context, client *LarkClient, userIds []string) (*UserInfoBatchGetResponse, error) {
-	return GetUsersByIDAPI(ctx, client, userIds, UNION_ID)
-}
-
 func GetUsersByIDAPI(ctx context.Context, client *LarkClient, userIds []string, idType UserIDType) (*UserInfoBatchGetResponse, error) {
 	response := &UserInfoBatchGetResponse{}
 	params := url.Values{}
@@ -284,11 +272,7 @@ func GetUsersByIDAPI(ctx context.Context, client *LarkClient, userIds []string, 
 		params.Add("user_ids", id)
 	}
 	path := fmt.Sprintf("%s/batch?%s&user_id_type=%s", USER_API, params.Encode(), string(idType))
-	tflog.Info(ctx, "Getting Users by OpenID", map[string]interface{}{
-		"path":         path,
-		"user_id_type": string(idType),
-		"user_ids":     userIds,
-	})
+	tflog.Info(ctx, "Getting Users by OpenID")
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
 	if err != nil {

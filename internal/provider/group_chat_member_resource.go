@@ -288,8 +288,8 @@ func (r *groupChatMemberResource) ConfigValidators(ctx context.Context) []resour
 		return []resource.ConfigValidator{}
 	}
 	return []resource.ConfigValidator{
-		local_validator.NewUserIDValidator("member_ids", true, true, r.client),
-		local_validator.NewUserIDValidator("administrator_ids", true, true, r.client),
+		local_validator.NewUserIDValidator("member_ids", true, true, common.OPEN_ID, r.client),
+		local_validator.NewUserIDValidator("administrator_ids", true, true, common.OPEN_ID, r.client),
 		local_validator.NewListShouldBeMemberOfAnotherListValidator("administrator_ids", "member_ids", r.client),
 	}
 }

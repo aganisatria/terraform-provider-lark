@@ -14,14 +14,16 @@ provider "lark" {
   retry_count = 3
 }
 
-data "lark_user_based_on_union_id" "user" {
+data "lark_user_by_id" "user" {
   users = [
     {
       union_id = "on_f96eca3d3bacf1f3dd54136083c33faa"
+      open_id  = "ou_f96eca3d3bacf1f3dd54136083c33faa"
     },
   ]
+  key_id = "union_id"
 }
 
 output "user" {
-  value = data.lark_user_based_on_union_id.user
+  value = data.lark_user_by_id.user
 }

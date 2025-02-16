@@ -18,8 +18,7 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | Data Source | Description |
 |---|---|
 | lark_user_based_on_email | Retrieve user data based on email |
-| lark_user_based_on_union_id | Retrieve user data based on union ID |
-| lark_user_based_on_user_id | Retrieve user data based on user ID |
+| lark_user_by_id | Retrieve user data based on user ID, open ID, or union ID |
 
 ## How to use
 See [docs](docs/index.md)
