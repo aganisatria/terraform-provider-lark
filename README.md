@@ -75,6 +75,13 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 make testacc
 ```
 
+## Installation
+
+1. golangcli-lint local => brew install golangci-lint
+2. goconvey => go install github.com/smartystreets/goconvey
+3. tfenv => brew install tfenv
+4. terraform => tfenv install latest
+
 _This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
 
 Build with love by [@aganisatria](https://github.com/aganisatria)

@@ -14,8 +14,8 @@ const (
 
 // HTTP Call Helpers.
 const (
-	BASE_RETRY_COUNT = 3
-	BASE_DELAY       = 10 //
+	BASE_RETRY_COUNT = 2
+	BASE_DELAY       = 1
 )
 
 type HTTPMethod string
@@ -44,4 +44,26 @@ const (
 	USER_ID  UserIDType = "user_id"
 	OPEN_ID  UserIDType = "open_id"
 	UNION_ID UserIDType = "union_id"
+)
+
+type TerraformType string
+
+// Terraform Type.
+const (
+	RESOURCE           TerraformType = "resource"
+	DATA_SOURCE        TerraformType = "data_source"
+	EPHEMERAL_RESOURCE TerraformType = "ephemeral_resource"
+	FUNCTION           TerraformType = "function"
+)
+
+type TerraformName string
+
+// Terraform Name.
+const (
+	GROUP_CHAT        TerraformName = "group_chat"
+	GROUP_CHAT_MEMBER TerraformName = "group_chat_member"
+	USER_GROUP        TerraformName = "user_group"
+	USER_GROUP_MEMBER TerraformName = "user_group_member"
+	USER_BY_EMAIL     TerraformName = "user_by_email"
+	USER_BY_ID        TerraformName = "user_by_id"
 )

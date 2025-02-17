@@ -14,16 +14,16 @@ provider "lark" {
   retry_count = 3
 }
 
-data "lark_user_by_id" "user" {
-  users = [
-    {
-      union_id = "on_f96eca3d3bacf1f3dd54136083c33faa"
-      open_id  = "ou_f96eca3d3bacf1f3dd54136083c33faa"
-    },
-  ]
-  key_id = "union_id"
+resource "lark_user_group" "example" {
+  group_id    = "cekiceki"
+  name        = "examplelelealay"
+  description = "example"
 }
 
-output "user" {
-  value = data.lark_user_by_id.user
+resource "lark_user_group_member" "example" {
+  depends_on    = [lark_user_group.example]
+  user_group_id = lark_user_group.example.group_id
+  member_ids = [
+    "ou_8fc0c1843c33c130462669327fb2113c"
+  ]
 }

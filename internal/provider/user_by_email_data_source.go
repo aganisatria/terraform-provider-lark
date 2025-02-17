@@ -18,33 +18,33 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = &UserBasedOnEmailDataSource{}
+var _ datasource.DataSource = &UserByEmailDataSource{}
 
-func NewUserBasedOnEmailDataSource() datasource.DataSource {
-	return &UserBasedOnEmailDataSource{}
+func NewUserByEmailDataSource() datasource.DataSource {
+	return &UserByEmailDataSource{}
 }
 
-// UserBasedOnEmailDataSource defines the data source implementation.
-type UserBasedOnEmailDataSource struct {
+// UserByEmailDataSource defines the data source implementation.
+type UserByEmailDataSource struct {
 	client *common.LarkClient
 }
 
-type UserBasedOnEmail struct {
+type UserByEmail struct {
 	UserID types.String `tfsdk:"user_id"`
 	Email  types.String `tfsdk:"email"`
 }
 
 // UserDataSourceModel describes the data source data model.
-type UserBasedOnEmailDataSourceModel struct {
+type UserByEmailDataSourceModel struct {
 	BaseResourceModel
-	Users []UserBasedOnEmail `tfsdk:"users"`
+	Users []UserByEmail `tfsdk:"users"`
 }
 
-func (d *UserBasedOnEmailDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_user_based_on_email"
+func (d *UserByEmailDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_user_by_email"
 }
 
-func (d *UserBasedOnEmailDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *UserByEmailDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	baseAttributes := BaseSchemaResourceAttributes()
 	attributes := map[string]schema.Attribute{
 		"users": schema.ListNestedAttribute{
@@ -86,7 +86,7 @@ func (d *UserBasedOnEmailDataSource) Schema(ctx context.Context, req datasource.
 	}
 }
 
-func (d *UserBasedOnEmailDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *UserByEmailDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -106,8 +106,8 @@ func (d *UserBasedOnEmailDataSource) Configure(ctx context.Context, req datasour
 	d.client = client
 }
 
-func (d *UserBasedOnEmailDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data UserBasedOnEmailDataSourceModel
+func (d *UserByEmailDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data UserByEmailDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -128,21 +128,21 @@ func (d *UserBasedOnEmailDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	users := make([]UserBasedOnEmail, 0, len(response.Data.UserList))
+	users := make([]UserByEmail, 0, len(response.Data.UserList))
 	for _, user := range response.Data.UserList {
 		if user.UserID == "" {
 			resp.Diagnostics.AddError("API Error Getting User ID by Emails", "User ID is not found for email: "+user.Email)
 			return
 		}
 
-		users = append(users, UserBasedOnEmail{
+		users = append(users, UserByEmail{
 			UserID: types.StringValue(user.UserID),
 			Email:  types.StringValue(user.Email),
 		})
 	}
 	data.Users = users
 
-	data.Id = types.StringValue("user-data-source-email" + "_" + time.Now().Format("20060102150405"))
+	data.Id = types.StringValue(common.ConstructID(common.DATA_SOURCE, common.USER_BY_EMAIL, ""))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

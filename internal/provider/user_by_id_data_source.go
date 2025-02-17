@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -130,7 +131,7 @@ func (d *UserByIDDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	ids, err := getIDsFromUsers(ctx, data.Users, data.KeyID.ValueString())
+	ids, err := getIDsFromUsers(data.Users, data.KeyID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Invalid User ID", err.Error())
 		return
@@ -159,7 +160,7 @@ func (d *UserByIDDataSource) Read(ctx context.Context, req datasource.ReadReques
 		data.Users = users
 	}
 
-	data.Id = types.StringValue("user-data-source-user-id" + "_" + time.Now().Format("20060102150405"))
+	data.Id = types.StringValue(common.ConstructID(common.DATA_SOURCE, common.USER_BY_ID, ""))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -187,7 +188,7 @@ func (v *keyIDInUsersValidator) ValidateDataSource(ctx context.Context, req data
 		return
 	}
 
-	_, err := getIDsFromUsers(ctx, config.Users, config.KeyID.ValueString())
+	_, err := getIDsFromUsers(config.Users, config.KeyID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Invalid User ID", err.Error())
 		return
@@ -203,7 +204,7 @@ func (d *UserByIDDataSource) ConfigValidators(ctx context.Context) []datasource.
 	}
 }
 
-func getIDsFromUsers(ctx context.Context, users []UserBasedOnUserID, keyID string) ([]string, error) {
+func getIDsFromUsers(users []UserBasedOnUserID, keyID string) ([]string, error) {
 	ids := []string{}
 	err_ids := []string{}
 	for _, user := range users {
@@ -244,7 +245,7 @@ func getIDsFromUsers(ctx context.Context, users []UserBasedOnUserID, keyID strin
 	}
 
 	if errMsg != "" {
-		return ids, fmt.Errorf(errMsg)
+		return ids, errors.New(errMsg)
 	}
 
 	return ids, nil

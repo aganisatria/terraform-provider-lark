@@ -118,7 +118,7 @@ func (r *groupChatMemberResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.Id = types.StringValue(data.GroupChatID.ValueString())
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.GROUP_CHAT_MEMBER, data.GroupChatID.ValueString()))
 	data.GroupChatID = types.StringValue(data.GroupChatID.ValueString())
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
@@ -175,7 +175,7 @@ func (r *groupChatMemberResource) Read(ctx context.Context, req resource.ReadReq
 		}
 	}
 
-	state.Id = types.StringValue(state.GroupChatID.ValueString())
+	state.Id = types.StringValue(state.Id.ValueString())
 	state.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	state.GroupChatID = types.StringValue(state.GroupChatID.ValueString())
 

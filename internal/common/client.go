@@ -147,10 +147,7 @@ func (c *LarkClient) doSingleRequest(
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
-		var errResp struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}
+		var errResp BaseResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
 			return fmt.Errorf("error response with status code %d", resp.StatusCode)
 		}

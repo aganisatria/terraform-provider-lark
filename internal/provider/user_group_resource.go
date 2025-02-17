@@ -140,7 +140,7 @@ func (r *userGroupResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.Id = types.StringValue(userGroupCreateResponse.Data.GroupID)
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.USER_GROUP, userGroupCreateResponse.Data.GroupID))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	data.GroupId = types.StringValue(userGroupCreateResponse.Data.GroupID)
 	data.Name = types.StringValue(userGroupCreateRequestBody.Name)
@@ -163,7 +163,7 @@ func (r *userGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.Id = types.StringValue(userGroupGetResponse.Data.Group.ID)
+	data.Id = types.StringValue(data.Id.ValueString())
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	data.GroupId = types.StringValue(userGroupGetResponse.Data.Group.ID)
 	data.Name = types.StringValue(userGroupGetResponse.Data.Group.Name)
