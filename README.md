@@ -17,7 +17,7 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 
 | Data Source | Description |
 |---|---|
-| lark_user_based_on_email | Retrieve user data based on email |
+| lark_user_by_email | Retrieve user data based on email |
 | lark_user_by_id | Retrieve user data based on user ID, open ID, or union ID |
 
 ## How to use
@@ -84,4 +84,4 @@ make testacc
 
 _This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
 
-Build with love by [@aganisatria](https://github.com/aganisatria)
+Created by [@aganisatria](https://github.com/aganisatria)
