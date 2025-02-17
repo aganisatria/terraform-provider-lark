@@ -28,7 +28,8 @@ _Add references to any related issues (e.g., "Fixes #123") if applicable._
 - [ ] Code has been linted and contains no syntax errors.
 - [ ] Necessary tests have been added and/or updated.
 - [ ] Documentation has been updated if required.
-- [ ] The code compiles without errors (`go build`) and passes tests (`go test`).
+- [ ] The code compiles without errors (`make build`) and passes tests (`make testall`).
+- [ ] All github checks are passing.
 
 ## Additional Notes
 

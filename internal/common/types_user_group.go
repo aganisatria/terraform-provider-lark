@@ -51,8 +51,7 @@ type UsergroupMemberAddRequest struct {
 }
 
 type UsergroupMemberAddResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
+	BaseResponse
 	Data struct {
 		Results []struct {
 			MemberID string `json:"member_id"`

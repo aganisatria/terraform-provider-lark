@@ -361,7 +361,7 @@ func (r *groupChatResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.Id = types.StringValue(groupChatCreateResponse.Data.ChatID)
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.GROUP_CHAT, groupChatCreateResponse.Data.ChatID))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	data.ChatID = types.StringValue(groupChatCreateResponse.Data.ChatID)

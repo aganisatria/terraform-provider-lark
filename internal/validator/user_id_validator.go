@@ -19,66 +19,68 @@ type UserIDValidator struct {
 	Path          path.Path
 	doesAList     bool
 	doesSkipAppID bool
+	idType        common.UserIDType
 	client        *common.LarkClient
 }
 
-func NewUserIDValidator(pathToField string, doesAList bool, doesSkipAppID bool, client *common.LarkClient) resource.ConfigValidator {
+func NewUserIDValidator(pathToField string, doesAList bool, doesSkipAppID bool, idType common.UserIDType, client *common.LarkClient) resource.ConfigValidator {
 	return &UserIDValidator{
 		Path:          path.Root(pathToField),
 		doesAList:     doesAList,
 		doesSkipAppID: doesSkipAppID,
+		idType:        idType,
 		client:        client,
 	}
 }
 
 func (v UserIDValidator) Description(ctx context.Context) string {
-	return fmt.Sprintf("validates that %s is a valid list of user_id", v.Path)
+	return fmt.Sprintf("validates that %s is a valid list of %s", v.Path, v.idType)
 }
 
 func (v UserIDValidator) MarkdownDescription(ctx context.Context) string {
-	return fmt.Sprintf("validates that `%s` is a valid list of user_id", v.Path)
+	return fmt.Sprintf("validates that `%s` is a valid list of %s", v.Path, v.idType)
 }
 
 func (v UserIDValidator) ValidateResource(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
-	availableUserIDs := []string{}
+	availableIDs := []string{}
 
 	if !v.doesAList {
-		var userID types.String
+		var id types.String
 
-		diags := req.Config.GetAttribute(ctx, v.Path, &userID)
+		diags := req.Config.GetAttribute(ctx, v.Path, &id)
 		resp.Diagnostics.Append(diags...)
 
-		if resp.Diagnostics.HasError() || userID.IsNull() || userID.IsUnknown() {
+		if resp.Diagnostics.HasError() || id.IsNull() || id.IsUnknown() {
 			return
 		}
 
-		if userID.ValueString() == "" {
+		if id.ValueString() == "" {
 			resp.Diagnostics.AddAttributeError(
 				v.Path,
-				"Invalid User ID",
-				"User ID cannot be empty",
+				"Invalid ID",
+				"ID cannot be empty",
 			)
 			return
 		}
 
-		availableUserIDs = append(availableUserIDs, userID.ValueString())
+		availableIDs = append(availableIDs, id.ValueString())
 	} else {
-		var userIDs []types.String
+		var ids []types.String
 
-		diags := req.Config.GetAttribute(ctx, v.Path, &userIDs)
+		diags := req.Config.GetAttribute(ctx, v.Path, &ids)
 		resp.Diagnostics.Append(diags...)
 
-		if resp.Diagnostics.HasError() || len(userIDs) == 0 {
+		if resp.Diagnostics.HasError() || len(ids) == 0 {
 			return
 		}
 
-		for _, element := range userIDs {
+		for _, element := range ids {
 			if !element.IsNull() && !element.IsUnknown() {
 				if element.ValueString() == "" {
 					resp.Diagnostics.AddAttributeError(
 						v.Path,
-						"Invalid User ID",
-						"User ID cannot be empty",
+						"Invalid ID",
+						"ID cannot be empty",
 					)
 					return
 				}
@@ -87,24 +89,24 @@ func (v UserIDValidator) ValidateResource(ctx context.Context, req resource.Vali
 					continue
 				}
 
-				availableUserIDs = append(availableUserIDs, element.ValueString())
+				availableIDs = append(availableIDs, element.ValueString())
 			}
 		}
 	}
 
-	if len(availableUserIDs) > 0 {
-		if err := isListOfUserIDsExist(ctx, v.client, availableUserIDs); err != nil {
+	if len(availableIDs) > 0 {
+		if err := isListOfUserIDsExist(ctx, v.client, availableIDs, v.idType); err != nil {
 			resp.Diagnostics.AddAttributeError(
 				v.Path,
-				"Invalid User ID",
-				fmt.Sprintf("Error validating user IDs: %s", err.Error()),
+				"Invalid ID",
+				fmt.Sprintf("Error validating IDs: %s", err.Error()),
 			)
 		}
 	}
 }
 
-func isListOfUserIDsExist(ctx context.Context, client *common.LarkClient, userIDs []string) error {
-	_, err := common.GetUsersByOpenIDAPI(ctx, client, userIDs)
+func isListOfUserIDsExist(ctx context.Context, client *common.LarkClient, ids []string, idType common.UserIDType) error {
+	_, err := common.GetUsersByIDAPI(ctx, client, ids, idType)
 	if err != nil {
 		return err
 	}

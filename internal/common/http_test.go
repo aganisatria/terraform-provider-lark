@@ -495,7 +495,7 @@ func TestUsergroupMemberRemoveAPI(t *testing.T) {
 	}
 }
 
-func TestGetUsersByOpenIDAPI(t *testing.T) {
+func TestGetUsersByIDAPI(t *testing.T) {
 	tests := []struct {
 		name         string
 		userIDs      []string
@@ -538,7 +538,7 @@ func TestGetUsersByOpenIDAPI(t *testing.T) {
 			}).Build()
 
 			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
-			got, err := GetUsersByOpenIDAPI(context.Background(), client, tt.userIDs)
+			got, err := GetUsersByIDAPI(context.Background(), client, tt.userIDs, OPEN_ID)
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
 				So(got, ShouldBeNil)

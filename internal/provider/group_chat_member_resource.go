@@ -118,7 +118,7 @@ func (r *groupChatMemberResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.Id = types.StringValue(data.GroupChatID.ValueString())
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.GROUP_CHAT_MEMBER, data.GroupChatID.ValueString()))
 	data.GroupChatID = types.StringValue(data.GroupChatID.ValueString())
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
@@ -175,7 +175,7 @@ func (r *groupChatMemberResource) Read(ctx context.Context, req resource.ReadReq
 		}
 	}
 
-	state.Id = types.StringValue(state.GroupChatID.ValueString())
+	state.Id = types.StringValue(state.Id.ValueString())
 	state.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	state.GroupChatID = types.StringValue(state.GroupChatID.ValueString())
 
@@ -288,8 +288,8 @@ func (r *groupChatMemberResource) ConfigValidators(ctx context.Context) []resour
 		return []resource.ConfigValidator{}
 	}
 	return []resource.ConfigValidator{
-		local_validator.NewUserIDValidator("member_ids", true, true, r.client),
-		local_validator.NewUserIDValidator("administrator_ids", true, true, r.client),
+		local_validator.NewUserIDValidator("member_ids", true, true, common.OPEN_ID, r.client),
+		local_validator.NewUserIDValidator("administrator_ids", true, true, common.OPEN_ID, r.client),
 		local_validator.NewListShouldBeMemberOfAnotherListValidator("administrator_ids", "member_ids", r.client),
 	}
 }

@@ -6,6 +6,7 @@ package common
 import (
 	"errors"
 	"strings"
+	"time"
 )
 
 // Contains checks if string contains any of the substrings.
@@ -30,4 +31,14 @@ func splitUserAndBotList(ids []string) (botList []string, personList []string, e
 		}
 	}
 	return botList, personList, nil
+}
+
+// ConstructID constructs the ID for the resource.
+// If the ID is empty, it will generate a random ID.
+func ConstructID(resourceType TerraformType, resourceName TerraformName, id string) string {
+	if id == "" {
+		return string(resourceType) + "_" + string(resourceName) + "_" + time.Now().Format("20060102150405")
+	}
+
+	return string(resourceType) + "_" + string(resourceName) + "_" + id + "_" + time.Now().Format("20060102150405")
 }

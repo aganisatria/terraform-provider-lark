@@ -18,8 +18,7 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | Data Source | Description |
 |---|---|
 | lark_user_based_on_email | Retrieve user data based on email |
-| lark_user_based_on_union_id | Retrieve user data based on union ID |
-| lark_user_based_on_user_id | Retrieve user data based on user ID |
+| lark_user_by_id | Retrieve user data based on user ID, open ID, or union ID |
 
 ## How to use
 See [docs](docs/index.md)
@@ -75,6 +74,13 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 ```shell
 make testacc
 ```
+
+## Installation
+
+1. golangcli-lint local => brew install golangci-lint
+2. goconvey => go install github.com/smartystreets/goconvey
+3. tfenv => brew install tfenv
+4. terraform => tfenv install latest
 
 _This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
 
