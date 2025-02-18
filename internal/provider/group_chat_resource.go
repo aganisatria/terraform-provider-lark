@@ -53,7 +53,6 @@ type groupChatResourceModel struct {
 	AddMemberPermission    types.String           `tfsdk:"add_member_permission"`
 	ShareCardPermission    types.String           `tfsdk:"share_card_permission"`
 	AtAllPermission        types.String           `tfsdk:"at_all_permission"`
-	GroupType              types.String           `tfsdk:"group_type"` // To validate how many members and administrators can be added.
 }
 
 func (r *groupChatResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -268,16 +267,6 @@ func (r *groupChatResource) Schema(ctx context.Context, req resource.SchemaReque
 			Default:             stringdefault.StaticString("all_members"),
 			Validators: []validator.String{
 				stringvalidator.OneOf("all_members", "only_owner"),
-			},
-		},
-		"group_type": schema.StringAttribute{
-			Description:         "Group chat type. Whether it is a common group or a super large group. Only 5 super large groups can be created for each enterprise tenant.",
-			MarkdownDescription: "Group chat type. Whether it is a common group or a super large group. Only 5 super large groups can be created for each enterprise tenant.",
-			Optional:            true,
-			Computed:            true,
-			Default:             stringdefault.StaticString("common"),
-			Validators: []validator.String{
-				stringvalidator.OneOf("common", "super_large"),
 			},
 		},
 	}

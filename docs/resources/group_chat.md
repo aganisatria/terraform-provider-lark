@@ -57,7 +57,6 @@ resource "lark_group_chat" "example" {
 - `description` (String) Group chat description.
 - `edit_permission` (String) Group chat edit permission.
 - `group_message_type` (String) Group chat message type.
-- `group_type` (String) Group chat type. Whether it is a common group or a super large group. Only 5 super large groups can be created for each enterprise tenant.
 - `hide_member_count_setting` (String) Group chat hide member count setting.
 - `i18n_names` (Attributes) Internationalized group chat name. (see [below for nested schema](#nestedatt--i18n_names))
 - `join_message_visibility` (String) Group chat join message visibility.

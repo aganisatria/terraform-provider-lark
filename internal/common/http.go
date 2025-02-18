@@ -720,3 +720,106 @@ func GroupChatAdministratorDeleteAPI(ctx context.Context, client *LarkClient, ch
 	tflog.Info(ctx, "Group Administrator Deleted")
 	return &fullResponse, nil
 }
+
+// ROLE API.
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role/create.
+func RoleCreateAPI(ctx context.Context, client *LarkClient, request RoleRequest) (*RoleCreateResponse, error) {
+	response := &RoleCreateResponse{}
+	tflog.Info(ctx, "Creating Role")
+
+	err := client.DoTenantRequest(ctx, POST, ROLE_API, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to create role", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Created")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role/update.
+func RoleUpdateAPI(ctx context.Context, client *LarkClient, roleID string, request RoleRequest) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Updating Role")
+	path := fmt.Sprintf("%s/%s", ROLE_API, roleID)
+
+	err := client.DoTenantRequest(ctx, PUT, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to update role", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Updated")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role/delete.
+func RoleDeleteAPI(ctx context.Context, client *LarkClient, roleID string) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Deleting Role")
+	path := fmt.Sprintf("%s/%s", ROLE_API, roleID)
+
+	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to delete role", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Deleted")
+	return response, nil
+}
+
+// ROLE MEMBER API.
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role-member/batch_create
+func RoleMemberAddAPI(ctx context.Context, client *LarkClient, roleID string, request RoleMemberCreateRequest) (*RoleMemberCreateResponse, error) {
+	response := &RoleMemberCreateResponse{}
+	tflog.Info(ctx, "Adding Role Member")
+	path := fmt.Sprintf("%s/%s/members/batch_create", ROLE_API, roleID)
+
+	err := client.DoTenantRequest(ctx, POST, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to add role member", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Member Added")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role-member/list
+func RoleMemberGetAPI(ctx context.Context, client *LarkClient, roleID string) (*RoleMemberGetResponse, error) {
+	response := &RoleMemberGetResponse{}
+	tflog.Info(ctx, "Getting Role Member")
+	path := fmt.Sprintf("%s/%s/members", ROLE_API, roleID)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to get role member", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Member Retrieved")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/functional_role-member/batch_delete
+func RoleMemberDeleteAPI(ctx context.Context, client *LarkClient, roleID string, request RoleMemberDeleteRequest) (*RoleMemberDeleteResponse, error) {
+	response := &RoleMemberDeleteResponse{}
+	tflog.Info(ctx, "Deleting Role Member")
+	path := fmt.Sprintf("%s/%s/members/batch_delete", ROLE_API, roleID)
+
+	err := client.DoTenantRequest(ctx, PATCH, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to delete role member", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Role Member Deleted")
+	return response, nil
+}

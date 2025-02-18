@@ -207,41 +207,54 @@ func (d *UserByIDDataSource) ConfigValidators(ctx context.Context) []datasource.
 func getIDsFromUsers(users []UserBasedOnUserID, keyID string) ([]string, error) {
 	ids := []string{}
 	err_ids := []string{}
+	empty_ids := []string{}
 	for _, user := range users {
 		var value string
 		switch keyID {
 		case "user_id":
 			value = user.UserID.ValueString()
 
-			if (!user.UnionID.IsUnknown() && !user.UnionID.IsNull()) || (!user.OpenID.IsUnknown() && !user.OpenID.IsNull()) {
+			if value == "" {
+				empty_ids = append(empty_ids, user.UserID.ValueString())
+			}
+
+			if (user.UnionID.IsUnknown() && user.UnionID.IsNull()) || (value != "" && user.OpenID.IsUnknown() && user.OpenID.IsNull()) {
 				err_ids = append(err_ids, user.UserID.ValueString())
 			}
 
 		case "union_id":
 			value = user.UnionID.ValueString()
 
-			if (!user.UserID.IsUnknown() && !user.UserID.IsNull()) || (!user.OpenID.IsUnknown() && !user.OpenID.IsNull()) {
+			if value == "" {
+				empty_ids = append(empty_ids, user.UnionID.ValueString())
+			}
+
+			if (user.UserID.IsUnknown() && user.UserID.IsNull()) || (value != "" && user.OpenID.IsUnknown() && user.OpenID.IsNull()) {
 				err_ids = append(err_ids, user.UnionID.ValueString())
 			}
 
 		case "open_id":
 			value = user.OpenID.ValueString()
 
-			if (!user.UserID.IsUnknown() && !user.UserID.IsNull()) || (!user.UnionID.IsUnknown() && !user.UnionID.IsNull()) {
+			if value == "" {
+				empty_ids = append(empty_ids, user.OpenID.ValueString())
+			}
+
+			if (value == "" && user.UserID.IsUnknown() && user.UserID.IsNull()) || (value != "" && user.UnionID.IsUnknown() && user.UnionID.IsNull()) {
 				err_ids = append(err_ids, user.OpenID.ValueString())
 			}
-		}
-
-		if value == "" {
-			err_ids = append(err_ids, user.UserID.ValueString())
 		}
 
 		ids = append(ids, value)
 	}
 
 	var errMsg string
+	if len(empty_ids) > 0 {
+		errMsg = errMsg + fmt.Sprintf("user %s is missing a non-empty value for the specified key_id: %s", strings.Join(empty_ids, ", "), keyID)
+	}
+
 	if len(err_ids) > 0 {
-		errMsg = fmt.Sprintf("user %s is missing a non-empty value for the specified key_id: %s", strings.Join(err_ids, ", "), keyID)
+		errMsg = errMsg + fmt.Sprintf("user %s is missing a non-empty value for the specified key_id: %s", strings.Join(err_ids, ", "), keyID)
 	}
 
 	if errMsg != "" {

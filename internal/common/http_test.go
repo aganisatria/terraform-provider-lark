@@ -77,6 +77,7 @@ func TestGetAccessTokenAPI(t *testing.T) {
 				So(gotTenant, ShouldEqual, tt.wantTenant)
 				So(gotApp, ShouldEqual, tt.wantApp)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -128,6 +129,7 @@ func TestUsergroupCreateAPI(t *testing.T) {
 					t.Errorf("expected response %v, got %v", tt.expectedResponse, got)
 				}
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -179,6 +181,7 @@ func TestUsergroupGetAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -233,6 +236,7 @@ func TestUsergroupUpdateAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -284,6 +288,7 @@ func TestUsergroupDeleteAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -297,6 +302,7 @@ func TestUsergroupListAPI(t *testing.T) {
 		got, err := UsergroupListAPI(context.Background(), client)
 		So(err, ShouldNotBeNil)
 		So(got, ShouldBeNil)
+		UnPatchAll()
 	})
 
 	PatchConvey("success list with pagination", t, func() {
@@ -321,6 +327,7 @@ func TestUsergroupListAPI(t *testing.T) {
 		got, err := UsergroupListAPI(context.Background(), client)
 		So(err, ShouldBeNil)
 		So(len(got.Data.GroupList), ShouldEqual, 2)
+		UnPatchAll()
 	})
 }
 
@@ -379,6 +386,7 @@ func TestUsergroupMemberAddAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -432,6 +440,7 @@ func TestUsergroupMemberGetByMemberTypeAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -491,6 +500,7 @@ func TestUsergroupMemberRemoveAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -546,6 +556,7 @@ func TestGetUsersByIDAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -605,6 +616,7 @@ func TestGetUserIdByEmailsAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -650,6 +662,7 @@ func TestGroupChatCreateAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &tt.mockResponse)
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -695,6 +708,7 @@ func TestGroupChatDeleteAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &BaseResponse{})
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -740,6 +754,7 @@ func TestGroupChatUpdateAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &BaseResponse{})
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -785,6 +800,7 @@ func TestGroupChatGetAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, &GroupChatGetResponse{})
 			}
+			UnPatchAll()
 		})
 	}
 }
@@ -908,17 +924,17 @@ func TestGroupChatMemberGetAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldResemble, tt.expectedResp)
 			}
+			UnPatchAll()
 		})
 	}
 }
 
 func TestGroupChatMemberAddAPI(t *testing.T) {
 	tests := []struct {
-		name      string
-		chatID    string
-		mockFn    func() []*MockBuilder
-		mockError error
-		wantErr   bool
+		name    string
+		chatID  string
+		mockFn  func() []*MockBuilder
+		wantErr bool
 	}{
 		{
 			name:   "error on split user and bot list",
@@ -998,17 +1014,17 @@ func TestGroupChatMemberAddAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
 		})
 	}
 }
 
 func TestGroupChatMemberDeleteAPI(t *testing.T) {
 	tests := []struct {
-		name      string
-		chatID    string
-		mockFn    func() []*MockBuilder
-		mockError error
-		wantErr   bool
+		name    string
+		chatID  string
+		mockFn  func() []*MockBuilder
+		wantErr bool
 	}{
 		{
 			name:   "error on split user and bot list",
@@ -1111,17 +1127,17 @@ func TestGroupChatMemberDeleteAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
 		})
 	}
 }
 
 func TestGroupChatAdministratorAddAPI(t *testing.T) {
 	tests := []struct {
-		name      string
-		chatID    string
-		mockFn    func() []*MockBuilder
-		mockError error
-		wantErr   bool
+		name    string
+		chatID  string
+		mockFn  func() []*MockBuilder
+		wantErr bool
 	}{
 		{
 			name:   "error on split user and bot list",
@@ -1213,17 +1229,17 @@ func TestGroupChatAdministratorAddAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
 		})
 	}
 }
 
 func TestGroupChatAdministratorDeleteAPI(t *testing.T) {
 	tests := []struct {
-		name      string
-		chatID    string
-		mockFn    func() []*MockBuilder
-		mockError error
-		wantErr   bool
+		name    string
+		chatID  string
+		mockFn  func() []*MockBuilder
+		wantErr bool
 	}{
 		{
 			name:   "error on split user and bot list",
@@ -1303,6 +1319,278 @@ func TestGroupChatAdministratorDeleteAPI(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(got, ShouldNotBeNil)
 			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleCreateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+		},
+		{
+			name: "error on create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("create failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleCreateAPI(context.Background(), client, RoleRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleUpdateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+		},
+		{
+			name: "error on update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("update failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleUpdateAPI(context.Background(), client, "role1", RoleRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+		},
+		{
+			name: "error on delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleDeleteAPI(context.Background(), client, "role1")
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleMemberAddAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success add",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+		},
+		{
+			name: "error on add",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("add failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleMemberAddAPI(context.Background(), client, "role1", RoleMemberCreateRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleMemberGetAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+		},
+		{
+			name: "error on get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("get failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleMemberGetAPI(context.Background(), client, "role1")
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestRoleMemberDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := RoleMemberDeleteAPI(context.Background(), client, "role1", RoleMemberDeleteRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
 		})
 	}
 }
