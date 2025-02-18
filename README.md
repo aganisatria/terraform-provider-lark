@@ -12,6 +12,8 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | lark_group_chat_member | Manage members for group chats in Lark |
 | lark_user_group | Create, update, and delete user groups in Lark |
 | lark_user_group_member | Manage members for user groups in Lark |
+| lark_role | Create, update, and delete roles in Lark |
+| lark_role_member | Manage members for roles in Lark |
 
 ### Data Source
 

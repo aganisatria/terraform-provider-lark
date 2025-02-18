@@ -10,6 +10,7 @@ const (
 	GROUP_CHAT_API = "/im/v1/chats"
 	USERGROUP_API  = "/contact/v3/group"
 	USER_API       = "/contact/v3/users"
+	ROLE_API       = "/contact/v3/functional_roles"
 )
 
 // HTTP Call Helpers.
