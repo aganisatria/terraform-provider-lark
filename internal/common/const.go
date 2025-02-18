@@ -7,6 +7,7 @@ package common
 const (
 	BASE_URL       = "https://open.larksuite.com/open-apis"
 	AUTH_API       = "/auth/v3/tenant_access_token/internal"
+	DEPARTMENT_API = "/contact/v3/departments"
 	GROUP_CHAT_API = "/im/v1/chats"
 	USERGROUP_API  = "/contact/v3/group"
 	USER_API       = "/contact/v3/users"

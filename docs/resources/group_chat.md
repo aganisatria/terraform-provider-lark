@@ -32,7 +32,7 @@ resource "lark_group_chat" "example" {
     status                            = true
     screenshot_has_permission_setting = "all_members"
     download_has_permission_setting   = "all_members"
-    message_has_permission_setting    = "all_members"
+    message_has_permission_setting    = "not_allowed"
   }
   urgent_setting            = "all_members"
   video_conference_setting  = "all_members"

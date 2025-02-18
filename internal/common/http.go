@@ -823,3 +823,74 @@ func RoleMemberDeleteAPI(ctx context.Context, client *LarkClient, roleID string,
 	tflog.Info(ctx, "Role Member Deleted")
 	return response, nil
 }
+
+// DEPARTMENT API.
+// https://open.larksuite.com/document/server-docs/contact-v3/department/create.
+func DepartmentCreateAPI(ctx context.Context, client *LarkClient, request DepartmentCreateRequest) (*DepartmentGetResponse, error) {
+	response := &DepartmentGetResponse{}
+	tflog.Info(ctx, "Sending Department Create Request")
+	path := fmt.Sprintf("%s?department_id_type=open_department_id", DEPARTMENT_API)
+
+	err := client.DoTenantRequest(ctx, POST, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to create department", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+
+	tflog.Info(ctx, "Department Create API Response Received")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/department/update
+func DepartmentUpdateAPI(ctx context.Context, client *LarkClient, departmentID string, request DepartmentUpdateRequest) (*DepartmentGetResponse, error) {
+	response := &DepartmentGetResponse{}
+	tflog.Info(ctx, "Updating Department")
+	path := fmt.Sprintf("%s/%s?department_id_type=open_department_id", DEPARTMENT_API, departmentID)
+
+	err := client.DoTenantRequest(ctx, PUT, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to update department", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Department Updated")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/department/get
+func DepartmentGetAPI(ctx context.Context, client *LarkClient, departmentID string) (*DepartmentGetResponse, error) {
+	response := &DepartmentGetResponse{}
+	tflog.Info(ctx, "Getting Department")
+
+	path := fmt.Sprintf("%s/%s", DEPARTMENT_API, departmentID)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to get department", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Department Retrieved")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/department/delete
+func DepartmentDeleteAPI(ctx context.Context, client *LarkClient, departmentID string) (*DepartmentDeleteResponse, error) {
+	response := &DepartmentDeleteResponse{}
+	tflog.Info(ctx, "Deleting Department")
+
+	path := fmt.Sprintf("%s/%s", DEPARTMENT_API, departmentID)
+	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to delete department", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Department Deleted")
+	return response, nil
+}
