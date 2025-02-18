@@ -23,6 +23,10 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | lark_user_by_id | Retrieve user data based on user ID, open ID, or union ID |
 
 ## How to use
+We have 2 default attribute, id and last updated at.
+1. Id is different with chat id / another lark id. Id can be a helper to you to generate unique identifier accross lark resource.
+2. Last updated at is a time in seconds that identify last updated resource.
+
 See [docs](docs/index.md)
 
 ## How to contribute
