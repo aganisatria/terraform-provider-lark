@@ -11,3 +11,4 @@ FEATURES:
 FEATURES:
 - Support Lark Role
 - Support Lark Role Member
+- Support Lark Department

@@ -7,6 +7,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Contains checks if string contains any of the substrings.
@@ -41,4 +43,13 @@ func ConstructID(resourceType TerraformType, resourceName TerraformName, id stri
 	}
 
 	return string(resourceType) + "_" + string(resourceName) + "_" + id + "_" + time.Now().Format("20060102150405")
+}
+
+// StringValuesToStrings converts a list of basetypes.StringValue to a list of strings.
+func StringValuesToStrings(values []basetypes.StringValue) []string {
+	result := make([]string, 0, len(values))
+	for _, v := range values {
+		result = append(result, v.ValueString())
+	}
+	return result
 }

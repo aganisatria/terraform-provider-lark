@@ -1594,3 +1594,187 @@ func TestRoleMemberDeleteAPI(t *testing.T) {
 		})
 	}
 }
+
+func TestDepartmentCreateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("create failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := DepartmentCreateAPI(context.Background(), client, DepartmentCreateRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestDepartmentUpdateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("update failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := DepartmentUpdateAPI(context.Background(), client, "department1", DepartmentUpdateRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestDepartmentDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := DepartmentDeleteAPI(context.Background(), client, "department1")
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestDepartmentGetAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("get failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := DepartmentGetAPI(context.Background(), client, "department1")
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
