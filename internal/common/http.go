@@ -894,3 +894,70 @@ func DepartmentDeleteAPI(ctx context.Context, client *LarkClient, departmentID s
 	tflog.Info(ctx, "Department Deleted")
 	return response, nil
 }
+
+// WORKFORCE TYPE API.
+// https://open.larksuite.com/document/server-docs/contact-v3/employee_type_enum/create.
+func WorkforceTypeCreateAPI(ctx context.Context, client *LarkClient, request WorkforceTypeRequest) (*WorkforceTypeResponse, error) {
+	response := &WorkforceTypeResponse{}
+	tflog.Info(ctx, "Creating Workforce Type")
+
+	err := client.DoTenantRequest(ctx, POST, WORKFORCE_TYPE_API, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to create workforce type", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Workforce Type Created")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/employee_type_enum/update.
+func WorkforceTypeUpdateAPI(ctx context.Context, client *LarkClient, enumID string, request WorkforceTypeRequest) (*WorkforceTypeResponse, error) {
+	response := &WorkforceTypeResponse{}
+	tflog.Info(ctx, "Updating Workforce Type")
+	path := fmt.Sprintf("%s/%s", WORKFORCE_TYPE_API, enumID)
+
+	err := client.DoTenantRequest(ctx, PUT, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to update workforce type", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Workforce Type Updated")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/employee_type_enum/list.
+func WorkforceTypeGetAllAPI(ctx context.Context, client *LarkClient) (*WorkforceTypeGetResponse, error) {
+	response := &WorkforceTypeGetResponse{}
+	tflog.Info(ctx, "Getting Workforce Type")
+
+	err := client.DoTenantRequest(ctx, GET, WORKFORCE_TYPE_API, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to get workforce type", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Workforce Type Retrieved")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/contact-v3/employee_type_enum/delete.
+func WorkforceTypeDeleteAPI(ctx context.Context, client *LarkClient, enumID string) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Deleting Workforce Type")
+	path := fmt.Sprintf("%s/%s", WORKFORCE_TYPE_API, enumID)
+
+	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to delete workforce type", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Workforce Type Deleted")
+	return response, nil
+}
