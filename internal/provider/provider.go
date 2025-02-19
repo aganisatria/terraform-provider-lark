@@ -113,6 +113,7 @@ func (p *LarkProvider) Resources(ctx context.Context) []func() resource.Resource
 		NewRoleMemberResource,
 		NewUserGroupResource,
 		NewUserGroupMemberResource,
+		NewWorkforceTypeResource,
 	}
 }
 

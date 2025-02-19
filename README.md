@@ -15,6 +15,7 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | lark_role | Create, update, and delete roles in Lark |
 | lark_role_member | Manage members for roles in Lark |
 | lark_department | Create, update, and delete departments in Lark |
+| lark_workforce_type | Create, update, and delete workforce type in Lark |
 
 ### Data Source
 
@@ -28,7 +29,6 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | Resource Type | Name |
 |---|---|
 | lark_lingo | Create, update, and delete lingo in Lark |
-| lark_workflow | Create, update, and delete workflow in Lark |
 
 ## How to use
 We have 2 default attribute, id and last updated at.

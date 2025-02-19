@@ -1778,3 +1778,188 @@ func TestDepartmentGetAPI(t *testing.T) {
 		})
 	}
 }
+
+func TestWorkforceTypeCreateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on create",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("create failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := WorkforceTypeCreateAPI(context.Background(), client, WorkforceTypeRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+
+}
+
+func TestWorkforceTypeUpdateAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on update",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("update failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := WorkforceTypeUpdateAPI(context.Background(), client, "enum1", WorkforceTypeRequest{})
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestWorkforceTypeDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on delete",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("delete failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := WorkforceTypeDeleteAPI(context.Background(), client, "enum1")
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}
+
+func TestWorkforceTypeGetAPI(t *testing.T) {
+	tests := []struct {
+		name    string
+		mockFn  func() []*MockBuilder
+		wantErr bool
+	}{
+		{
+			name: "success get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return nil
+					}),
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "error on get",
+			mockFn: func() []*MockBuilder {
+				return []*MockBuilder{
+					Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+						return fmt.Errorf("get failed")
+					}),
+				}
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			for _, mockBuilder := range tt.mockFn() {
+				mockBuilder.Build()
+			}
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
+			got, err := WorkforceTypeGetAllAPI(context.Background(), client)
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			}
+			UnPatchAll()
+		})
+	}
+}

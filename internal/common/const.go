@@ -5,13 +5,14 @@ package common
 
 // URL Things.
 const (
-	BASE_URL       = "https://open.larksuite.com/open-apis"
-	AUTH_API       = "/auth/v3/tenant_access_token/internal"
-	DEPARTMENT_API = "/contact/v3/departments"
-	GROUP_CHAT_API = "/im/v1/chats"
-	USERGROUP_API  = "/contact/v3/group"
-	USER_API       = "/contact/v3/users"
-	ROLE_API       = "/contact/v3/functional_roles"
+	BASE_URL           = "https://open.larksuite.com/open-apis"
+	AUTH_API           = "/auth/v3/tenant_access_token/internal"
+	DEPARTMENT_API     = "/contact/v3/departments"
+	GROUP_CHAT_API     = "/im/v1/chats"
+	USERGROUP_API      = "/contact/v3/group"
+	USER_API           = "/contact/v3/users"
+	ROLE_API           = "/contact/v3/functional_roles"
+	WORKFORCE_TYPE_API = "/contact/v3/employee_type_enums"
 )
 
 // HTTP Call Helpers.
