@@ -169,7 +169,7 @@ func (r *workforceTypeResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.Id = types.StringValue(response.Data.EmployeeTypeEnum.EnumID)
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.WORKFORCE_TYPE, response.Data.EmployeeTypeEnum.EnumID))
 	data.EnumID = types.StringValue(response.Data.EmployeeTypeEnum.EnumID)
 	data.EnumValue = types.StringValue(response.Data.EmployeeTypeEnum.EnumValue)
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
@@ -239,7 +239,7 @@ func (r *workforceTypeResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	plan.Id = types.StringValue(response.Data.EmployeeTypeEnum.EnumID)
+	plan.Id = state.Id
 	plan.EnumID = types.StringValue(response.Data.EmployeeTypeEnum.EnumID)
 	plan.EnumValue = types.StringValue(response.Data.EmployeeTypeEnum.EnumValue)
 	plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))

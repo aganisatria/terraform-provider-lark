@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccUserByIdDataSource(t *testing.T) {
+	Mock(common.GetAccessTokenAPI).Return("test_tenant_access_token", "test_app_access_token", nil).Build()
 	Mock(common.GetUsersByIDAPI).Return(&common.UserInfoBatchGetResponse{
 		Data: struct {
 			Items []common.User `json:"items"`

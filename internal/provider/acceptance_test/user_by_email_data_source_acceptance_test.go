@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccUserByEmailDataSource(t *testing.T) {
+	Mock(common.GetAccessTokenAPI).Return("test_tenant_access_token", "test_app_access_token", nil).Build()
 	Mock(common.GetUserIdByEmailsAPI).Return(&common.UserInfoByEmailOrMobileBatchGetResponse{
 		Data: struct {
 			UserList []common.UserInfo `json:"user_list"`

@@ -221,9 +221,9 @@ func (r *departmentResource) Create(ctx context.Context, req resource.CreateRequ
 
 	departmentId := data.DepartmentId.ValueString()
 	if departmentId != "" {
-		_, err := common.DepartmentGetAPI(ctx, r.client, data.DepartmentId.ValueString())
+		_, err := common.DepartmentGetByDepartmentIDAPI(ctx, r.client, data.DepartmentId.ValueString())
 		if err == nil {
-			resp.Diagnostics.AddError("API Error Reading Department", "Department already exists")
+			resp.Diagnostics.AddError("API Error Reading Department", "Department with the same ID already exists")
 			return
 		}
 	}
@@ -249,7 +249,7 @@ func (r *departmentResource) Create(ctx context.Context, req resource.CreateRequ
 	data.OpenDepartmentId = types.StringValue(departmentCreateResponse.Data.Department.OpenDepartmentID)
 	data.ChatID = types.StringValue(departmentCreateResponse.Data.Department.ChatID)
 	data.MemberCount = types.Int64Value(int64(departmentCreateResponse.Data.Department.MemberCount))
-	data.Id = types.StringValue(departmentCreateResponse.Data.Department.DepartmentID)
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.DEPARTMENT, departmentCreateResponse.Data.Department.DepartmentID))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -263,7 +263,7 @@ func (r *departmentResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	parentDepartmentId := data.ParentDepartmentId.ValueString()
-	_, err := common.DepartmentGetAPI(ctx, r.client, parentDepartmentId)
+	_, err := common.DepartmentGetByDepartmentIDAPI(ctx, r.client, parentDepartmentId)
 	if err != nil && parentDepartmentId != "0" {
 		resp.Diagnostics.AddError("API Error Reading Department", "Parent department not found")
 		return
@@ -304,12 +304,23 @@ func (r *departmentResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	plan.DepartmentId = types.StringValue(departmentUpdateResponse.Data.Department.DepartmentID)
+	if plan.DepartmentId.ValueString() != departmentUpdateResponse.Data.Department.DepartmentID {
+		_, err = common.DepartmentUpdateIDAPI(ctx, r.client, state.OpenDepartmentId.ValueString(), common.DepartmentUpdateIDRequest{
+			NewDepartmentID: plan.DepartmentId.ValueString(),
+		})
+
+		if err != nil {
+			resp.Diagnostics.AddError("API Error Updating Department ID", err.Error())
+			return
+		}
+	} else {
+		plan.DepartmentId = types.StringValue(departmentUpdateResponse.Data.Department.DepartmentID)
+	}
+
 	plan.OpenDepartmentId = types.StringValue(departmentUpdateResponse.Data.Department.OpenDepartmentID)
 	plan.ChatID = types.StringValue(departmentUpdateResponse.Data.Department.ChatID)
 	plan.MemberCount = types.Int64Value(int64(departmentUpdateResponse.Data.Department.MemberCount))
-
-	plan.Id = types.StringValue(state.Id.ValueString())
+	plan.Id = state.Id
 	plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -342,7 +353,7 @@ func (r *departmentResource) ConfigValidators(ctx context.Context) []resource.Co
 
 func (r *departmentResource) modelToRequest(ctx context.Context, data *departmentResourceModel) (common.BaseDepartment, error) {
 
-	_, err := common.DepartmentGetAPI(ctx, r.client, data.ParentDepartmentId.ValueString())
+	_, err := common.DepartmentGetByDepartmentIDAPI(ctx, r.client, data.ParentDepartmentId.ValueString())
 	if err != nil && data.ParentDepartmentId.ValueString() != "0" {
 		return common.BaseDepartment{}, err
 	}
@@ -381,4 +392,40 @@ func (r *departmentResource) modelToRequest(ctx context.Context, data *departmen
 		GroupChatEmployeeTypes: groupChatEmployeeTypes,
 		CreateGroupChat:        data.CreateGroupChat.ValueBool(),
 	}, nil
+}
+
+// We use modify plan when we need both plan and state when validating.
+func (r *departmentResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	var plan, state *departmentResourceModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	// plan null means resource is being deleted.
+	if req.Plan.Raw.IsNull() {
+		return
+	}
+
+	// State null means resource is being created.
+	if req.State.Raw.IsNull() {
+
+		// Checking if the department id is available.
+		if plan.DepartmentId.ValueString() != "" {
+			_, err := common.DepartmentGetByDepartmentIDAPI(ctx, r.client, plan.DepartmentId.ValueString())
+			if err == nil {
+				resp.Diagnostics.AddError("API Error Getting Department", "Department with the same ID already exists")
+				return
+			}
+		}
+
+		return
+	}
+
+	if plan.DepartmentId.ValueString() != "" && plan.DepartmentId.ValueString() != state.DepartmentId.ValueString() {
+		// Checking if the department id is available.
+		_, err := common.DepartmentGetByDepartmentIDAPI(ctx, r.client, plan.DepartmentId.ValueString())
+		if err == nil {
+			resp.Diagnostics.AddError("API Error Getting Department", "Department with the same ID already exists")
+			return
+		}
+	}
 }

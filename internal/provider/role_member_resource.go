@@ -114,7 +114,7 @@ func (r *roleMemberResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	data.Id = types.StringValue(data.RoleID.ValueString())
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.ROLE_MEMBER, data.RoleID.ValueString()))
 	data.RoleID = types.StringValue(data.RoleID.ValueString())
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	data.MemberIDs = memberIDs
@@ -158,7 +158,6 @@ func (r *roleMemberResource) Read(ctx context.Context, req resource.ReadRequest,
 		}
 	}
 
-	data.Id = types.StringValue(data.RoleID.ValueString())
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	data.RoleID = types.StringValue(data.RoleID.ValueString())
 	data.MemberIDs = memberIDs

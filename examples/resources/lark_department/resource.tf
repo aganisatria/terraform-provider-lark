@@ -1,18 +1,21 @@
 resource "lark_department" "example" {
-  name = "example"
+  name = "testooo"
   i18n_name = {
-    en_us = "example"
-    zh_cn = "示例"
-    ja_jp = "例"
+    ja_jp = "テストooo"
+    en_us = "Testooo"
+    zh_cn = "测试ooo"
   }
   parent_department_id = "0"
-  department_id        = "dp_919c0000000000000000000000000000"
+  department_id        = "digidawi"
+  leader_user_id       = "ou_8fc0c1843c33c130462669327fb2113c"
   order                = "1"
-  unit_ids             = ["unit_v1_919c0000000000000000000000000000"]
-  create_group_chat    = true
-  leaders = [{
-    leader_id   = "user_v1_919c0000000000000000000000000000"
-    leader_type = 1
-  }]
+  unit_ids             = ["ou_8fc0c1843c33c130462669327fb2113c"]
+  create_group_chat    = false
+  leaders = [
+    {
+      leader_type = 1
+      leader_id   = "ou_8fc0c1843c33c130462669327fb2113c"
+    }
+  ]
   group_chat_employee_types = [1, 2]
 }

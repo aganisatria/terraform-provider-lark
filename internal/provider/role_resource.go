@@ -107,7 +107,7 @@ func (r *roleResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 
 	data.RoleID = types.StringValue(roleResponse.Data.RoleID)
-	data.Id = types.StringValue(roleResponse.Data.RoleID)
+	data.Id = types.StringValue(common.ConstructID(common.RESOURCE, common.ROLE, roleResponse.Data.RoleID))
 	data.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -145,7 +145,7 @@ func (r *roleResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	plan.Id = types.StringValue(state.Id.ValueString())
+	plan.Id = state.Id
 	plan.RoleID = types.StringValue(state.RoleID.ValueString())
 	plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC3339))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
