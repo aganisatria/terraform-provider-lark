@@ -64,3 +64,7 @@ type DepartmentDeleteResponse struct {
 	BaseResponse
 	Data struct{} `json:"data"`
 }
+
+type DepartmentUpdateIDRequest struct {
+	NewDepartmentID string `json:"new_department_id"`
+}

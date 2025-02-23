@@ -1769,7 +1769,7 @@ func TestDepartmentGetAPI(t *testing.T) {
 			}
 
 			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, BASE_RETRY_COUNT)
-			got, err := DepartmentGetAPI(context.Background(), client, "department1")
+			got, err := DepartmentGetByOpenDepartmentIDAPI(context.Background(), client, "department1")
 			if tt.wantErr {
 				So(err, ShouldNotBeNil)
 				So(got, ShouldBeNil)

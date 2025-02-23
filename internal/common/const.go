@@ -12,6 +12,7 @@ const (
 	USERGROUP_API      = "/contact/v3/group"
 	USER_API           = "/contact/v3/users"
 	ROLE_API           = "/contact/v3/functional_roles"
+	UNIT_API           = "/contact/v3/units"
 	WORKFORCE_TYPE_API = "/contact/v3/employee_type_enums"
 )
 
@@ -63,10 +64,22 @@ type TerraformName string
 
 // Terraform Name.
 const (
+	DEPARTMENT        TerraformName = "department"
 	GROUP_CHAT        TerraformName = "group_chat"
 	GROUP_CHAT_MEMBER TerraformName = "group_chat_member"
+	ROLE              TerraformName = "role"
+	ROLE_MEMBER       TerraformName = "role_member"
 	USER_GROUP        TerraformName = "user_group"
 	USER_GROUP_MEMBER TerraformName = "user_group_member"
 	USER_BY_EMAIL     TerraformName = "user_by_email"
 	USER_BY_ID        TerraformName = "user_by_id"
+	WORKFORCE_TYPE    TerraformName = "workforce_type"
+)
+
+type DepartmentIDType string
+
+// Department ID Type.
+const (
+	DEPARTMENT_ID      DepartmentIDType = "department_id"
+	OPEN_DEPARTMENT_ID DepartmentIDType = "open_department_id"
 )

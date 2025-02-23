@@ -29,7 +29,7 @@ func GetAccessTokenAPI(appID, appSecret string, baseDelay int, retryCount int) (
 
 	err := client.DoInitializeRequest(context.Background(), POST, AUTH_API, requestBody, &response)
 
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		fmt.Println("err", err)
 		return "", "", fmt.Errorf("failed to get access token: %w", err)
 	}
@@ -47,7 +47,7 @@ func UsergroupCreateAPI(ctx context.Context, client *LarkClient, request Usergro
 	err := client.DoTenantRequest(ctx, POST, USERGROUP_API, request, response)
 	tflog.Info(ctx, "Creating User Group")
 
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to create user group", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -64,7 +64,7 @@ func UsergroupGetAPI(ctx context.Context, client *LarkClient, groupID string) (*
 	tflog.Info(ctx, "Getting User Group")
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get user group", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -81,7 +81,7 @@ func UsergroupUpdateAPI(ctx context.Context, client *LarkClient, groupID string,
 	tflog.Info(ctx, "Updating User Group")
 
 	err := client.DoTenantRequest(ctx, PATCH, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to update user group", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -98,7 +98,7 @@ func UsergroupDeleteAPI(ctx context.Context, client *LarkClient, groupID string)
 	tflog.Info(ctx, "Deleting User Group")
 
 	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete user group", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -128,7 +128,7 @@ func UsergroupListAPI(ctx context.Context, client *LarkClient) (*UsergroupListRe
 		})
 
 		err := client.DoTenantRequest(ctx, GET, path, nil, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to get user groups", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -196,7 +196,7 @@ func UsergroupMemberAddAPI(ctx context.Context, client *LarkClient, groupID stri
 			Members: currentTurnMemberIDs,
 		}
 		err := client.DoTenantRequest(ctx, POST, path, request, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add user group member", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -215,7 +215,7 @@ func UsergroupMemberGetByMemberTypeAPI(ctx context.Context, client *LarkClient, 
 	tflog.Info(ctx, "Getting User Group Member by Member Type")
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get user group member", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -251,7 +251,7 @@ func UsergroupMemberRemoveAPI(ctx context.Context, client *LarkClient, groupID s
 			Members: currentTurnMemberIDs,
 		}
 		err := client.DoTenantRequest(ctx, POST, path, request, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to remove user group member", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -275,7 +275,7 @@ func GetUsersByIDAPI(ctx context.Context, client *LarkClient, userIds []string, 
 	tflog.Info(ctx, "Getting Users by OpenID")
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get users by OpenID", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -302,7 +302,7 @@ func GetUserIdByEmailsAPI(ctx context.Context, client *LarkClient, request UserI
 		}
 
 		err := client.DoTenantRequest(ctx, POST, path, request, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to get user ID by emails", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -321,7 +321,7 @@ func GroupChatCreateAPI(ctx context.Context, client *LarkClient, request GroupCh
 	tflog.Info(ctx, "Creating Group Chat")
 
 	err := client.DoTenantRequest(ctx, POST, GROUP_CHAT_API, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to create group chat", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -341,7 +341,7 @@ func GroupChatDeleteAPI(ctx context.Context, client *LarkClient, chatID string) 
 	tflog.Info(ctx, "Deleting Group Chat", map[string]interface{}{
 		"path": path,
 	})
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete group chat", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -358,7 +358,7 @@ func GroupChatUpdateAPI(ctx context.Context, client *LarkClient, chatID string, 
 	path := fmt.Sprintf("%s/%s", GROUP_CHAT_API, chatID)
 
 	err := client.DoTenantRequest(ctx, PUT, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to update group chat", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -375,7 +375,7 @@ func GroupChatGetAPI(ctx context.Context, client *LarkClient, chatID string) (*G
 	path := fmt.Sprintf("%s/%s", GROUP_CHAT_API, chatID)
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get group chat", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -401,7 +401,7 @@ func GroupChatMemberGetAPI(ctx context.Context, client *LarkClient, chatID strin
 		}
 
 		err := client.DoTenantRequest(ctx, GET, path, nil, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to get user groups", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -473,7 +473,7 @@ func GroupChatMemberAddAPI(ctx context.Context, client *LarkClient, chatID strin
 		path = fmt.Sprintf("%s?member_id_type=app_id", path)
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add bot members", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -496,7 +496,7 @@ func GroupChatMemberAddAPI(ctx context.Context, client *LarkClient, chatID strin
 		response := &GroupChatMemberAddResponse{}
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add user members", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -537,7 +537,7 @@ func GroupChatMemberDeleteAPI(ctx context.Context, client *LarkClient, chatID st
 		response := &GroupChatMemberRemoveResponse{}
 
 		err := client.DoTenantRequest(ctx, DELETE, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to delete bot members", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -560,7 +560,7 @@ func GroupChatMemberDeleteAPI(ctx context.Context, client *LarkClient, chatID st
 		response := &GroupChatMemberRemoveResponse{}
 
 		err := client.DoTenantRequest(ctx, DELETE, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to delete user members", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -616,7 +616,7 @@ func GroupChatAdministratorAddAPI(ctx context.Context, client *LarkClient, chatI
 		response := &GroupChatAdministratorResponse{}
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add bot administrators", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -640,7 +640,7 @@ func GroupChatAdministratorAddAPI(ctx context.Context, client *LarkClient, chatI
 		response := &GroupChatAdministratorResponse{}
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add user administrators", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -682,7 +682,7 @@ func GroupChatAdministratorDeleteAPI(ctx context.Context, client *LarkClient, ch
 		response := &GroupChatAdministratorResponse{}
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add bot administrators", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -706,7 +706,7 @@ func GroupChatAdministratorDeleteAPI(ctx context.Context, client *LarkClient, ch
 		response := &GroupChatAdministratorResponse{}
 
 		err := client.DoTenantRequest(ctx, POST, path, batchRequest, response)
-		if err != nil {
+		if err != nil || response.Code != 0 {
 			tflog.Error(ctx, "Failed to add user administrators", map[string]interface{}{
 				"error": err.Error(),
 			})
@@ -728,7 +728,7 @@ func RoleCreateAPI(ctx context.Context, client *LarkClient, request RoleRequest)
 	tflog.Info(ctx, "Creating Role")
 
 	err := client.DoTenantRequest(ctx, POST, ROLE_API, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to create role", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -745,7 +745,7 @@ func RoleUpdateAPI(ctx context.Context, client *LarkClient, roleID string, reque
 	path := fmt.Sprintf("%s/%s", ROLE_API, roleID)
 
 	err := client.DoTenantRequest(ctx, PUT, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to update role", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -762,7 +762,7 @@ func RoleDeleteAPI(ctx context.Context, client *LarkClient, roleID string) (*Bas
 	path := fmt.Sprintf("%s/%s", ROLE_API, roleID)
 
 	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete role", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -780,7 +780,7 @@ func RoleMemberAddAPI(ctx context.Context, client *LarkClient, roleID string, re
 	path := fmt.Sprintf("%s/%s/members/batch_create", ROLE_API, roleID)
 
 	err := client.DoTenantRequest(ctx, POST, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to add role member", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -797,7 +797,7 @@ func RoleMemberGetAPI(ctx context.Context, client *LarkClient, roleID string) (*
 	path := fmt.Sprintf("%s/%s/members", ROLE_API, roleID)
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get role member", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -814,7 +814,7 @@ func RoleMemberDeleteAPI(ctx context.Context, client *LarkClient, roleID string,
 	path := fmt.Sprintf("%s/%s/members/batch_delete", ROLE_API, roleID)
 
 	err := client.DoTenantRequest(ctx, PATCH, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete role member", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -832,7 +832,7 @@ func DepartmentCreateAPI(ctx context.Context, client *LarkClient, request Depart
 	path := fmt.Sprintf("%s?department_id_type=open_department_id", DEPARTMENT_API)
 
 	err := client.DoTenantRequest(ctx, POST, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to create department", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -850,7 +850,7 @@ func DepartmentUpdateAPI(ctx context.Context, client *LarkClient, departmentID s
 	path := fmt.Sprintf("%s/%s?department_id_type=open_department_id", DEPARTMENT_API, departmentID)
 
 	err := client.DoTenantRequest(ctx, PUT, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to update department", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -861,14 +861,22 @@ func DepartmentUpdateAPI(ctx context.Context, client *LarkClient, departmentID s
 }
 
 // https://open.larksuite.com/document/server-docs/contact-v3/department/get
-func DepartmentGetAPI(ctx context.Context, client *LarkClient, departmentID string) (*DepartmentGetResponse, error) {
+func DepartmentGetByDepartmentIDAPI(ctx context.Context, client *LarkClient, departmentID string) (*DepartmentGetResponse, error) {
+	return DepartmentGetAPI(ctx, client, departmentID, DEPARTMENT_ID)
+}
+
+func DepartmentGetByOpenDepartmentIDAPI(ctx context.Context, client *LarkClient, departmentID string) (*DepartmentGetResponse, error) {
+	return DepartmentGetAPI(ctx, client, departmentID, OPEN_DEPARTMENT_ID)
+}
+
+func DepartmentGetAPI(ctx context.Context, client *LarkClient, departmentID string, departmentIDType DepartmentIDType) (*DepartmentGetResponse, error) {
 	response := &DepartmentGetResponse{}
 	tflog.Info(ctx, "Getting Department")
 
-	path := fmt.Sprintf("%s/%s", DEPARTMENT_API, departmentID)
+	path := fmt.Sprintf("%s/%s?department_id_type=%s", DEPARTMENT_API, departmentID, departmentIDType)
 
 	err := client.DoTenantRequest(ctx, GET, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get department", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -885,13 +893,30 @@ func DepartmentDeleteAPI(ctx context.Context, client *LarkClient, departmentID s
 
 	path := fmt.Sprintf("%s/%s", DEPARTMENT_API, departmentID)
 	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete department", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, err
 	}
 	tflog.Info(ctx, "Department Deleted")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/update_department_id?appId=cli_a718cd690138d02f.
+func DepartmentUpdateIDAPI(ctx context.Context, client *LarkClient, parentDepartmentID string, request DepartmentUpdateIDRequest) (*BaseResponse, error) {
+	response := &BaseResponse{}
+	tflog.Info(ctx, "Updating Department ID")
+	path := fmt.Sprintf("%s/%s/update_department_id?department_id_type=open_department_id", DEPARTMENT_API, parentDepartmentID)
+
+	err := client.DoTenantRequest(ctx, PATCH, path, request, response)
+	if err != nil || response.Code != 0 {
+		tflog.Error(ctx, "Failed to update department ID", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, err
+	}
+	tflog.Info(ctx, "Department ID Updated")
 	return response, nil
 }
 
@@ -902,7 +927,7 @@ func WorkforceTypeCreateAPI(ctx context.Context, client *LarkClient, request Wor
 	tflog.Info(ctx, "Creating Workforce Type")
 
 	err := client.DoTenantRequest(ctx, POST, WORKFORCE_TYPE_API, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to create workforce type", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -919,7 +944,7 @@ func WorkforceTypeUpdateAPI(ctx context.Context, client *LarkClient, enumID stri
 	path := fmt.Sprintf("%s/%s", WORKFORCE_TYPE_API, enumID)
 
 	err := client.DoTenantRequest(ctx, PUT, path, request, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to update workforce type", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -935,7 +960,7 @@ func WorkforceTypeGetAllAPI(ctx context.Context, client *LarkClient) (*Workforce
 	tflog.Info(ctx, "Getting Workforce Type")
 
 	err := client.DoTenantRequest(ctx, GET, WORKFORCE_TYPE_API, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to get workforce type", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -952,7 +977,7 @@ func WorkforceTypeDeleteAPI(ctx context.Context, client *LarkClient, enumID stri
 	path := fmt.Sprintf("%s/%s", WORKFORCE_TYPE_API, enumID)
 
 	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
-	if err != nil {
+	if err != nil || response.Code != 0 {
 		tflog.Error(ctx, "Failed to delete workforce type", map[string]interface{}{
 			"error": err.Error(),
 		})

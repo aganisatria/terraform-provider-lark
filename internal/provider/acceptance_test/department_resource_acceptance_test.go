@@ -30,8 +30,8 @@ func TestAccDepartmentResource(t *testing.T) {
 		},
 	}, nil).Build()
 
-	// Mock DepartmentGetAPI dengan cara yang benar
-	Mock(common.DepartmentGetAPI).When(func(ctx context.Context, client *common.LarkClient, departmentID string) bool {
+	// Mock DepartmentGetAPI dengan signature yang benar
+	Mock(common.DepartmentGetByDepartmentIDAPI).When(func(ctx context.Context, client *common.LarkClient, departmentID string) bool {
 		return departmentID == "dp_919c0000000000000000000000000000"
 	}).Return(nil, fmt.Errorf("department not found")).When(func(ctx context.Context, client *common.LarkClient, departmentID string) bool {
 		return departmentID == "0" || departmentID == "test_department_id" || departmentID == "od_test_department_id"
