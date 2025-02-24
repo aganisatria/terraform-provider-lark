@@ -6,9 +6,11 @@ FEATURES:
 - Support Lark User Group
 - Support Lark User Group Member
 
-## 0.0.2 (Unreleased)
+## 1.0.0
 
 FEATURES:
 - Support Lark Role
 - Support Lark Role Member
 - Support Lark Department
+- Support Lark Workflow
+- Separate ID dan Resource ID
