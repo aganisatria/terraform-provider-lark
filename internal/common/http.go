@@ -986,3 +986,164 @@ func WorkforceTypeDeleteAPI(ctx context.Context, client *LarkClient, enumID stri
 	tflog.Info(ctx, "Workforce Type Deleted")
 	return response, nil
 }
+
+// DOCS SPACE API.
+
+// DOCS SPACE FOLDER API.
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/folder/get-root-folder-meta.
+func RootFolderMetaGetAPI(ctx context.Context, client *LarkClient) (*RootFolderMetaGetResponse, error) {
+	response := &RootFolderMetaGetResponse{}
+	tflog.Info(ctx, "Getting Root Folder Meta")
+	path := fmt.Sprintf("%s/meta", EXPLORER_ROOT_FOLDER_API)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Code != 0 {
+		tflog.Error(ctx, "Failed to get root folder meta", map[string]interface{}{"response": response})
+		return nil, fmt.Errorf("failed to get root folder meta: %s", response.Msg)
+	}
+	tflog.Info(ctx, "Root Folder Meta Retrieved")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/folder/get-folder-meta.
+func FolderMetaGetAPI(ctx context.Context, client *LarkClient, folderToken string) (*FolderMetaGetResponse, error) {
+	response := &FolderMetaGetResponse{}
+	tflog.Info(ctx, "Getting Folder Meta")
+	path := fmt.Sprintf("%s/%s/meta", EXPLORER_FOLDER_API, folderToken)
+
+	err := client.DoTenantRequest(ctx, GET, path, nil, response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Code != 0 {
+		tflog.Error(ctx, "Failed to get folder meta", map[string]interface{}{
+			"response": response,
+		})
+		return nil, fmt.Errorf("failed to get folder meta: %s", response.Msg)
+	}
+	tflog.Info(ctx, "Folder Meta Retrieved")
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/folder/list
+func FolderChildrenListAPI(ctx context.Context, client *LarkClient, folderToken string) (*FolderChildrenListResponse, error) {
+	var allChildren []FileChild
+	pageSize := 200
+	pageToken := ""
+
+	tflog.Info(ctx, "Listing folder children", map[string]interface{}{
+		"folder_token": folderToken,
+	})
+
+	for {
+		response := &FolderChildrenListResponse{}
+		path := fmt.Sprintf("%s?folder_token=%s&page_size=%d", DOCS_FILE_API, folderToken, pageSize)
+
+		if pageToken != "" {
+			path += fmt.Sprintf("&page_token=%s", pageToken)
+		}
+
+		err := client.DoTenantRequest(ctx, GET, path, nil, response)
+		if err != nil {
+			tflog.Error(ctx, "Failed to list folder children page", map[string]interface{}{"error": err})
+			return nil, err
+		}
+		if response.Code != 0 {
+			err = fmt.Errorf("API error when listing folder children: %s", response.Msg)
+			tflog.Error(ctx, err.Error(), map[string]interface{}{"response": response})
+			return nil, err
+		}
+
+		allChildren = append(allChildren, response.Data.Files...)
+
+		if !response.Data.HasMore || response.Data.NextPageToken == "" {
+			break
+		}
+
+		pageToken = response.Data.NextPageToken
+	}
+
+	finalResponse := &FolderChildrenListResponse{
+		BaseResponse: BaseResponse{
+			Code: 0,
+			Msg:  "success",
+		},
+	}
+	finalResponse.Data.Files = allChildren
+	finalResponse.Data.NextPageToken = ""
+	finalResponse.Data.HasMore = false
+
+	tflog.Info(ctx, "All folder children retrieved", map[string]interface{}{
+		"total_children": len(allChildren),
+	})
+
+	return finalResponse, nil
+}
+
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/folder/create_folder.
+func FolderCreateAPI(ctx context.Context, client *LarkClient, request FolderCreateRequest) (*FolderCreateResponse, error) {
+	response := &FolderCreateResponse{}
+	tflog.Info(ctx, "Creating Folder", map[string]interface{}{
+		"folder_token": request.FolderToken,
+		"name":         request.Name,
+	})
+	path := fmt.Sprintf("%s/create_folder", DOCS_FILE_API)
+
+	err := client.DoTenantRequest(ctx, POST, path, request, response)
+	if err != nil {
+		tflog.Error(ctx, "Failed to create folder", map[string]interface{}{
+			"error": err,
+		})
+		return nil, err
+	}
+
+	if response.Code != 0 {
+		tflog.Error(ctx, "API returned an error when creating folder", map[string]interface{}{"response": response})
+		return nil, fmt.Errorf("API error when creating folder: %s", response.Msg)
+	}
+	tflog.Info(ctx, "Folder Created successfully", map[string]interface{}{"new_folder_token": response.Data.Token})
+	return response, nil
+}
+
+// DOCS SPACE FILE API.
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/file/move.
+func FileMoveAPI(ctx context.Context, client *LarkClient, fileToken string, request FileMoveRequest) (*FileTaskResponse, error) {
+	response := &FileTaskResponse{}
+	tflog.Info(ctx, "Moving File", map[string]interface{}{
+		"file_token":      fileToken,
+		"destination_dir": request.FolderToken,
+	})
+	path := fmt.Sprintf("%s/%s/move", DOCS_FILE_API, fileToken)
+
+	err := client.DoTenantRequest(ctx, POST, path, request, response)
+	if err != nil || response.Code != 0 {
+		tflog.Error(ctx, "Failed to move file", map[string]interface{}{"error": err, "response": response})
+		return nil, fmt.Errorf("API error when moving file: %s", response.Msg)
+	}
+
+	tflog.Info(ctx, "File Move task created successfully", map[string]interface{}{"task_id": response.Data.TaskID})
+	return response, nil
+}
+
+// https://open.larksuite.com/document/server-docs/docs/drive-v1/file/delete.
+func FileDeleteAPI(ctx context.Context, client *LarkClient, fileToken, fileType string) (*FileTaskResponse, error) {
+	response := &FileTaskResponse{}
+	tflog.Info(ctx, "Deleting File (moving to trash)", map[string]interface{}{
+		"file_token": fileToken,
+		"file_type":  fileType,
+	})
+	path := fmt.Sprintf("%s/%s?type=%s", DOCS_FILE_API, fileToken, fileType)
+
+	err := client.DoTenantRequest(ctx, DELETE, path, nil, response)
+	if err != nil || response.Code != 0 {
+		tflog.Error(ctx, "API returned an error when deleting file", map[string]interface{}{"error": err, "response": response})
+		return nil, fmt.Errorf("API error when deleting file: %s", response.Msg)
+	}
+	tflog.Info(ctx, "File Delete task created successfully", map[string]interface{}{"task_id": response.Data.TaskID})
+	return response, nil
+}

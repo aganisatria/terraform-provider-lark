@@ -29,6 +29,7 @@ Terraform Provider Lark is a custom provider that enables you to manage and inte
 | Resource Type | Name |
 |---|---|
 | lark_lingo | Create, update, and delete lingo in Lark |
+| lark_docs_space_folder | Create, update, and delete docs space folders in Lark |
 
 ## How to use
 We have 2 default attribute, id and last updated at.
