@@ -107,6 +107,7 @@ func (p *LarkProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 func (p *LarkProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewDepartmentResource,
+		NewDocsSpaceFolderResource,
 		NewGroupChatResource,
 		NewGroupChatMemberResource,
 		NewRoleResource,

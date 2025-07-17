@@ -1963,3 +1963,390 @@ func TestWorkforceTypeGetAPI(t *testing.T) {
 		})
 	}
 }
+
+func TestRootFolderMetaGetAPI(t *testing.T) {
+	tests := []struct {
+		name         string
+		mockResponse RootFolderMetaGetResponse
+		mockError    error
+		wantErr      bool
+	}{
+		{
+			name:      "error on get",
+			mockError: fmt.Errorf("get failed"),
+			wantErr:   true,
+		},
+		{
+			name: "success get",
+			mockResponse: RootFolderMetaGetResponse{
+				BaseResponse: BaseResponse{Code: 0},
+				Data: RootFolderMetaData{
+					Token: "fldcnroot123",
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+		{
+			name: "api error",
+			mockResponse: RootFolderMetaGetResponse{
+				BaseResponse: BaseResponse{Code: 1, Msg: "api error"},
+			},
+			mockError: nil,
+			wantErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			cleanup := SetupDoTenantRequest(tt.mockError, tt.mockResponse)
+			defer cleanup()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := RootFolderMetaGetAPI(context.Background(), client)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestFolderMetaGetAPI(t *testing.T) {
+	tests := []struct {
+		name         string
+		folderToken  string
+		mockResponse FolderMetaGetResponse
+		mockError    error
+		wantErr      bool
+	}{
+		{
+			name:         "error on get",
+			folderToken:  "fldcn123",
+			mockResponse: FolderMetaGetResponse{},
+			mockError:    fmt.Errorf("get failed"),
+			wantErr:      true,
+		},
+		{
+			name:        "success get",
+			folderToken: "fldcn123",
+			mockResponse: FolderMetaGetResponse{
+				BaseResponse: BaseResponse{Code: 0},
+				Data: FolderMetaData{
+					Token: "fldcn123",
+					Name:  "Test Folder",
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+		{
+			name:        "api error",
+			folderToken: "fldcn123",
+			mockResponse: FolderMetaGetResponse{
+				BaseResponse: BaseResponse{Code: 1, Msg: "api error"},
+			},
+			mockError: nil,
+			wantErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			cleanup := SetupDoTenantRequest(tt.mockError, tt.mockResponse)
+			defer cleanup()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := FolderMetaGetAPI(context.Background(), client, tt.folderToken)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestFolderCreateAPI(t *testing.T) {
+	tests := []struct {
+		name          string
+		request       FolderCreateRequest
+		mockResponse  FolderCreateResponse
+		mockError     error
+		wantErr       bool
+		expectedError string
+	}{
+		{
+			name:      "error on create",
+			request:   FolderCreateRequest{Name: "New Folder", FolderToken: "fldcnparent"},
+			mockError: fmt.Errorf("create failed"),
+			wantErr:   true,
+		},
+		{
+			name:    "api error",
+			request: FolderCreateRequest{Name: "New Folder", FolderToken: "fldcnparent"},
+			mockResponse: FolderCreateResponse{
+				BaseResponse: BaseResponse{Code: 9999, Msg: "invalid parent token"},
+			},
+			mockError:     nil,
+			wantErr:       true,
+			expectedError: "API error when creating folder: invalid parent token",
+		},
+		{
+			name:    "success create",
+			request: FolderCreateRequest{Name: "New Folder", FolderToken: "fldcnparent"},
+			mockResponse: FolderCreateResponse{
+				BaseResponse: BaseResponse{Code: 0},
+				Data: FolderCreateResponseData{
+					Token: "fldcnnew123",
+					ID:    "123",
+					Name:  "New Folder",
+					URL:   "https://example.larksuite.com/drive/home/",
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			cleanup := SetupDoTenantRequest(tt.mockError, tt.mockResponse)
+			defer cleanup()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := FolderCreateAPI(context.Background(), client, tt.request)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+				if tt.expectedError != "" {
+					So(err.Error(), ShouldContainSubstring, tt.expectedError)
+				}
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestFolderChildrenListAPI(t *testing.T) {
+	tests := []struct {
+		name          string
+		folderToken   string
+		mockFn        func() *MockBuilder
+		wantErr       bool
+		expectedCount int
+	}{
+		{
+			name:        "success with multiple pages",
+			folderToken: "fldcnparent",
+			mockFn: func() *MockBuilder {
+				responses := []FolderChildrenListResponse{
+					{
+						BaseResponse: BaseResponse{Code: 0},
+						Data: FolderChildrenListData{
+							Files: []FileChild{
+								{Token: "file1", Name: "File 1", Type: "doc"},
+							},
+							NextPageToken: "next_page_token",
+							HasMore:       true,
+						},
+					},
+					{
+						BaseResponse: BaseResponse{Code: 0},
+						Data: FolderChildrenListData{
+							Files: []FileChild{
+								{Token: "file2", Name: "File 2", Type: "sheet"},
+							},
+							NextPageToken: "",
+							HasMore:       false,
+						},
+					},
+				}
+
+				callCount := 0
+				return Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+					if callCount >= len(responses) {
+						return fmt.Errorf("unexpected API call")
+					}
+					if r, ok := resp.(*FolderChildrenListResponse); ok {
+						*r = responses[callCount]
+					}
+					callCount++
+					return nil
+				})
+			},
+			wantErr:       false,
+			expectedCount: 2,
+		},
+		{
+			name:        "error on first page",
+			folderToken: "fldcnparent",
+			mockFn: func() *MockBuilder {
+				return Mock((*LarkClient).DoTenantRequest).To(func(c *LarkClient, ctx context.Context, method HTTPMethod, path string, reqBody interface{}, resp interface{}) error {
+					return fmt.Errorf("network error")
+				})
+			},
+			wantErr:       true,
+			expectedCount: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			tt.mockFn().Build()
+			defer UnPatchAll()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := FolderChildrenListAPI(context.Background(), client, tt.folderToken)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldNotBeNil)
+				So(len(got.Data.Files), ShouldEqual, tt.expectedCount)
+			}
+		})
+	}
+}
+
+func TestFileMoveAPI(t *testing.T) {
+	tests := []struct {
+		name          string
+		fileToken     string
+		request       FileMoveRequest
+		mockResponse  FileTaskResponse
+		mockError     error
+		wantErr       bool
+		expectedError string
+	}{
+		{
+			name:      "error on move",
+			fileToken: "file123",
+			request:   FileMoveRequest{Type: "doc", FolderToken: "fld123"},
+			mockError: fmt.Errorf("move failed"),
+			wantErr:   true,
+		},
+		{
+			name:      "api error",
+			fileToken: "file123",
+			request:   FileMoveRequest{Type: "doc", FolderToken: "fld123"},
+			mockResponse: FileTaskResponse{
+				BaseResponse: BaseResponse{Code: 9999, Msg: "permission denied"},
+			},
+			mockError:     nil,
+			wantErr:       true,
+			expectedError: "API error when moving file: permission denied",
+		},
+		{
+			name:      "success move",
+			fileToken: "file123",
+			request:   FileMoveRequest{Type: "doc", FolderToken: "fld123"},
+			mockResponse: FileTaskResponse{
+				BaseResponse: BaseResponse{Code: 0},
+				Data: FileTaskResponseData{
+					TaskID: "task-abc-123",
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			cleanup := SetupDoTenantRequest(tt.mockError, tt.mockResponse)
+			defer cleanup()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := FileMoveAPI(context.Background(), client, tt.fileToken, tt.request)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+				if tt.expectedError != "" {
+					So(err.Error(), ShouldContainSubstring, tt.expectedError)
+				}
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
+
+func TestFileDeleteAPI(t *testing.T) {
+	tests := []struct {
+		name          string
+		fileToken     string
+		fileType      string
+		mockResponse  FileTaskResponse
+		mockError     error
+		wantErr       bool
+		expectedError string
+	}{
+		{
+			name:      "error on delete",
+			fileToken: "file123",
+			fileType:  "doc",
+			mockError: fmt.Errorf("delete failed"),
+			wantErr:   true,
+		},
+		{
+			name:      "api error",
+			fileToken: "file123",
+			fileType:  "doc",
+			mockResponse: FileTaskResponse{
+				BaseResponse: BaseResponse{Code: 9999, Msg: "file not found"},
+			},
+			mockError:     nil,
+			wantErr:       true,
+			expectedError: "API error when deleting file: file not found",
+		},
+		{
+			name:      "success delete",
+			fileToken: "file123",
+			fileType:  "doc",
+			mockResponse: FileTaskResponse{
+				BaseResponse: BaseResponse{Code: 0},
+				Data: FileTaskResponseData{
+					TaskID: "task-xyz-456",
+				},
+			},
+			mockError: nil,
+			wantErr:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		PatchConvey(tt.name, t, func() {
+			cleanup := SetupDoTenantRequest(tt.mockError, tt.mockResponse)
+			defer cleanup()
+
+			client := NewLarkClient("tenant-token", "app-token", "app-id", BASE_DELAY, 1)
+			got, err := FileDeleteAPI(context.Background(), client, tt.fileToken, tt.fileType)
+
+			if tt.wantErr {
+				So(err, ShouldNotBeNil)
+				So(got, ShouldBeNil)
+				if tt.expectedError != "" {
+					So(err.Error(), ShouldContainSubstring, tt.expectedError)
+				}
+			} else {
+				So(err, ShouldBeNil)
+				So(got, ShouldResemble, &tt.mockResponse)
+			}
+		})
+	}
+}
