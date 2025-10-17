@@ -3,7 +3,7 @@ module github.com/aganisatria/terraform-provider-lark
 go 1.23.0
 
 require (
-	github.com/bytedance/mockey v1.2.14
+	github.com/bytedance/mockey v1.2.15
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.18.0
 	github.com/hashicorp/terraform-plugin-go v0.28.0
